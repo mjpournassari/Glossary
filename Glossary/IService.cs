@@ -8,36 +8,40 @@ using System.Text;
 
 namespace Glossary
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IService1" in both code and config file together.
     [ServiceContract]
     public interface IService
     {
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "/words/?query={query}")]
+        List<BO.Word> Search(string query);
+
 
         [OperationContract]
-        string GetData(int value);
+        [WebInvoke(Method = "GET",
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "/words/start/?query={start}")]
+        List<BO.Word> SearchStart(string start);
+
 
         [OperationContract]
-        CompositeType GetDataUsingDataContract(CompositeType composite);
+        [WebInvoke(Method = "GET",
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "/excel")]
+        List<BO.Word> excelToDb();
 
-        // TODO: Add your service operations here
+
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "/words/{Id}")]
+        BO.Word selectWordById(string Id);
     }
 
-
-    // Use a data contract as illustrated in the sample below to add composite types to service operations.
-    [DataContract]
-    public class Word
-    {
-        public Int64 ID { get; set; }
-        public string English { get; set; }
-        public string Persian { get; set; }
-        public string Description { get; set; }
-        public List<Word_Details> Details { get; set; }
-    }
-    public class Word_Details
-    {
-        public Int64 DetailId { get; set; }
-        public string Body { get; set; }
-        public Int64 WId { get; set; }
-        public int Kind { get; set; }
-    }
 }
