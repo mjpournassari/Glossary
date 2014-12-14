@@ -164,7 +164,7 @@ namespace Glossary
             if (Dt.Rows.Count == 1)
             {
                 w.ID = long.Parse(Dt[0]["ID"].ToString());
-                w.Description = CutLetters(Dt[0]["Description"].ToString());
+                w.Description = Dt[0]["Description"].ToString();
                 w.Persian = Dt[0]["Persian"].ToString();
                 w.English = Dt[0]["English"].ToString();
 
