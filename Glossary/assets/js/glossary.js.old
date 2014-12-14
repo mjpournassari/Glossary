@@ -1,0 +1,949 @@
+/*
+var completeResults = [{ "permalink": "index.html", "image": "./images/noimg.png", "title": "This is a demo title" }, { "permalink": "index.html", "image": "./images/noimg.png", "title": "Another example of a title" }, { "permalink": "index.html", "image": "./images/noimg.png", "title": "Yet another random title" }, { "permalink": "index.html", "image": "./images/noimg.png", "title": "The 2nd last title in our array" }, { "permalink": "index.html", "image": "./images/noimg.png", "title": "Last title for the static example" }];
+*/
+// JavaScript Document
+(function($) {
+	$(document).ready(function() {
+		
+		$('#searchkey').each(function(){
+			$(this).attr('title', $(this).val()).focus(function(){
+				if ($(this).val() == $(this).attr('title')) {
+				  $(this).val('');
+				}
+			}).blur(function(){
+				if ($(this).val() == '' || $(this).val() == ' ') {
+					$(this).val($(this).attr('title'));
+				}
+			});
+		});
+
+		$('input#searchkey').result(function(event, data, formatted) {
+			$('#result').html(!data ? "No match!" : "Selected: " + formatted);
+		}).blur(function(){		
+		});
+		
+		$(function() {
+			var base = $("body").attr('data-base');
+			function format(item) {
+				return '<a href="'+ item.link+'"><span class="fa">' + item.fa +'</span><span class="en">' + item.en +'</span></a>';			
+			}
+			
+			function link(item) {
+				return item.link
+			}
+
+			function title(item) {
+				return item.title
+			}
+		
+			$("#searchkey").autocomplete(base + '?option=com_glossary&view=search', {
+				width: $("#searchkey").outerWidth()-2,			
+				max: 5,			
+				scroll: false,
+				dataType: "json",
+				matchContains: "word",
+				parse: function(data) {
+					return $.map(data, function(row) {
+						return {
+							data: row,
+							value: row.title,
+							result: $("#searchkey").val()
+						}
+					});
+				},
+				formatItem: function(item) {				
+					return format(item);
+				}
+			}).result(function(e, item) {
+				$("#searchkey").val(title(item));
+				//location.href = link(item);
+			});						
+		});
+	});
+})(jQuery);
+$(function() {
+	// var base = $("head").find("base").attr('href');
+	var base = $("body").attr('data-base');
+	var queryString = function (url) {
+		var queryString = {};
+		if (typeof url == "undefined") {
+			var query = window.location.search.substring(1);
+		} else {
+			var query = url;
+		}
+		var vars = query.split("&");
+		for (var i=0;i<vars.length;i++) {
+			var pair = vars[i].split("=");
+			if (typeof queryString[pair[0]] === "undefined") {
+				queryString[pair[0]] = pair[1];
+			} else if (typeof queryString[pair[0]] === "string") {
+				var arr = [queryString[pair[0]], pair[1]];
+				queryString[pair[0]] = arr;
+			} else {
+				queryString[pair[0]].push(pair[1]);
+			}
+		} 
+		return queryString;
+	} ();
+	
+	$("#totop a").click(function(e) { // To top transition
+		$('html, body').stop().animate({
+			scrollTop: 0
+		}, 500);
+		e.preventDefault();
+	});
+	
+	$(".alphabets li").delegate("a", 'click', function(e) {
+		var word = $(this).text();
+		var path = $(this).parent().parent().attr('data-path');
+		var lang = $(this).parent().parent().attr('data-lang');
+		var href = base + 'alphabetic/?l=' + lang + '&q=' + word;
+		// console.log(href);
+		e.preventDefault();
+		window.location = href;
+	});
+	
+	$(".mask-time").mask('99:99:99');
+	$(".mask-number").on('keyup', function(event) {
+		this.value = this.value.replace(/[^0-9\.]/g, '');
+	});
+	
+	$("*[data-toggle=tooltip]").tooltip(); // Init tooltip
+	
+	
+	function parseQueryString(query) {
+		var query = (query || '?').substr(1),
+			map   = {};
+		query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
+			(map[key] = map[key] || []).push(value);
+		});
+		return map;
+	}
+	
+});
+
+/*!
+	Colorbox v1.4.28 - 2013-09-04
+	jQuery lightbox and modal window plugin
+	(c) 2013 Jack Moore - http://www.jacklmoore.com/colorbox
+	license: http://www.opensource.org/licenses/mit-license.php
+*/
+(function(e,t,i){function o(i,o,n){var r=t.createElement(i);return o&&(r.id=Z+o),n&&(r.style.cssText=n),e(r)}function n(){return i.innerHeight?i.innerHeight:e(i).height()}function r(e){var t=k.length,i=(A+e)%t;return 0>i?t+i:i}function l(e,t){return Math.round((/%/.test(e)?("x"===t?E.width():n())/100:1)*parseInt(e,10))}function h(e,t){return e.photo||e.photoRegex.test(t)}function s(e,t){return e.retinaUrl&&i.devicePixelRatio>1?t.replace(e.photoRegex,e.retinaSuffix):t}function a(e){"contains"in g[0]&&!g[0].contains(e.target)&&(e.stopPropagation(),g.focus())}function d(){var t,i=e.data(z,Y);null==i?(B=e.extend({},X),console&&console.log&&console.log("Error: cboxElement missing settings object")):B=e.extend({},i);for(t in B)e.isFunction(B[t])&&"on"!==t.slice(0,2)&&(B[t]=B[t].call(z));B.rel=B.rel||z.rel||e(z).data("rel")||"nofollow",B.href=B.href||e(z).attr("href"),B.title=B.title||z.title,"string"==typeof B.href&&(B.href=e.trim(B.href))}function c(i,o){e(t).trigger(i),ht.trigger(i),e.isFunction(o)&&o.call(z)}function u(i){q||(z=i,d(),k=e(z),A=0,"nofollow"!==B.rel&&(k=e("."+et).filter(function(){var t,i=e.data(this,Y);return i&&(t=e(this).data("rel")||i.rel||this.rel),t===B.rel}),A=k.index(z),-1===A&&(k=k.add(z),A=k.length-1)),w.css({opacity:parseFloat(B.opacity),cursor:B.overlayClose?"pointer":"auto",visibility:"visible"}).show(),J&&g.add(w).removeClass(J),B.className&&g.add(w).addClass(B.className),J=B.className,B.closeButton?K.html(B.close).appendTo(y):K.appendTo("<div/>"),U||(U=$=!0,g.css({visibility:"hidden",display:"block"}),H=o(st,"LoadedContent","width:0; height:0; overflow:hidden"),y.css({width:"",height:""}).append(H),O=x.height()+C.height()+y.outerHeight(!0)-y.height(),_=b.width()+T.width()+y.outerWidth(!0)-y.width(),D=H.outerHeight(!0),N=H.outerWidth(!0),B.w=l(B.initialWidth,"x"),B.h=l(B.initialHeight,"y"),Q.position(),c(tt,B.onOpen),P.add(L).hide(),g.focus(),B.trapFocus&&t.addEventListener&&(t.addEventListener("focus",a,!0),ht.one(rt,function(){t.removeEventListener("focus",a,!0)})),B.returnFocus&&ht.one(rt,function(){e(z).focus()})),m())}function f(){!g&&t.body&&(V=!1,E=e(i),g=o(st).attr({id:Y,"class":e.support.opacity===!1?Z+"IE":"",role:"dialog",tabindex:"-1"}).hide(),w=o(st,"Overlay").hide(),F=e([o(st,"LoadingOverlay")[0],o(st,"LoadingGraphic")[0]]),v=o(st,"Wrapper"),y=o(st,"Content").append(L=o(st,"Title"),S=o(st,"Current"),I=e('<button type="button"/>').attr({id:Z+"Previous"}),R=e('<button type="button"/>').attr({id:Z+"Next"}),M=o("button","Slideshow"),F),K=e('<button type="button"/>').attr({id:Z+"Close"}),v.append(o(st).append(o(st,"TopLeft"),x=o(st,"TopCenter"),o(st,"TopRight")),o(st,!1,"clear:left").append(b=o(st,"MiddleLeft"),y,T=o(st,"MiddleRight")),o(st,!1,"clear:left").append(o(st,"BottomLeft"),C=o(st,"BottomCenter"),o(st,"BottomRight"))).find("div div").css({"float":"left"}),W=o(st,!1,"position:absolute; width:9999px; visibility:hidden; display:none"),P=R.add(I).add(S).add(M),e(t.body).append(w,g.append(v,W)))}function p(){function i(e){e.which>1||e.shiftKey||e.altKey||e.metaKey||e.ctrlKey||(e.preventDefault(),u(this))}return g?(V||(V=!0,R.click(function(){Q.next()}),I.click(function(){Q.prev()}),K.click(function(){Q.close()}),w.click(function(){B.overlayClose&&Q.close()}),e(t).bind("keydown."+Z,function(e){var t=e.keyCode;U&&B.escKey&&27===t&&(e.preventDefault(),Q.close()),U&&B.arrowKey&&k[1]&&!e.altKey&&(37===t?(e.preventDefault(),I.click()):39===t&&(e.preventDefault(),R.click()))}),e.isFunction(e.fn.on)?e(t).on("click."+Z,"."+et,i):e("."+et).live("click."+Z,i)),!0):!1}function m(){var n,r,a,u=Q.prep,f=++at;$=!0,j=!1,z=k[A],d(),c(lt),c(it,B.onLoad),B.h=B.height?l(B.height,"y")-D-O:B.innerHeight&&l(B.innerHeight,"y"),B.w=B.width?l(B.width,"x")-N-_:B.innerWidth&&l(B.innerWidth,"x"),B.mw=B.w,B.mh=B.h,B.maxWidth&&(B.mw=l(B.maxWidth,"x")-N-_,B.mw=B.w&&B.w<B.mw?B.w:B.mw),B.maxHeight&&(B.mh=l(B.maxHeight,"y")-D-O,B.mh=B.h&&B.h<B.mh?B.h:B.mh),n=B.href,G=setTimeout(function(){F.show()},100),B.inline?(a=o(st).hide().insertBefore(e(n)[0]),ht.one(lt,function(){a.replaceWith(H.children())}),u(e(n))):B.iframe?u(" "):B.html?u(B.html):h(B,n)?(n=s(B,n),j=t.createElement("img"),e(j).addClass(Z+"Photo").bind("error",function(){B.title=!1,u(o(st,"Error").html(B.imgError))}).one("load",function(){var t;f===at&&(j.alt=e(z).attr("alt")||e(z).attr("data-alt")||"",B.retinaImage&&i.devicePixelRatio>1&&(j.height=j.height/i.devicePixelRatio,j.width=j.width/i.devicePixelRatio),B.scalePhotos&&(r=function(){j.height-=j.height*t,j.width-=j.width*t},B.mw&&j.width>B.mw&&(t=(j.width-B.mw)/j.width,r()),B.mh&&j.height>B.mh&&(t=(j.height-B.mh)/j.height,r())),B.h&&(j.style.marginTop=Math.max(B.mh-j.height,0)/2+"px"),k[1]&&(B.loop||k[A+1])&&(j.style.cursor="pointer",j.onclick=function(){Q.next()}),j.style.width=j.width+"px",j.style.height=j.height+"px",setTimeout(function(){u(j)},1))}),setTimeout(function(){j.src=n},1)):n&&W.load(n,B.data,function(t,i){f===at&&u("error"===i?o(st,"Error").html(B.xhrError):e(this).contents())})}var w,g,v,y,x,b,T,C,k,E,H,W,F,L,S,M,R,I,K,P,B,O,_,D,N,z,A,j,U,$,q,G,Q,J,V,X={transition:"elastic",speed:300,fadeOut:300,width:!1,initialWidth:"600",innerWidth:!1,maxWidth:!1,height:!1,initialHeight:"450",innerHeight:!1,maxHeight:!1,scalePhotos:!0,scrolling:!0,inline:!1,html:!1,iframe:!1,fastIframe:!0,photo:!1,href:!1,title:!1,rel:!1,opacity:.9,preloading:!0,className:!1,retinaImage:!1,retinaUrl:!1,retinaSuffix:"@2x.$1",current:"image {current} of {total}",previous:"previous",next:"next",close:"close",xhrError:"This content failed to load.",imgError:"This image failed to load.",open:!1,returnFocus:!0,trapFocus:!0,reposition:!0,loop:!0,slideshow:!1,slideshowAuto:!0,slideshowSpeed:2500,slideshowStart:"start slideshow",slideshowStop:"stop slideshow",photoRegex:/\.(gif|png|jp(e|g|eg)|bmp|ico|webp)((#|\?).*)?$/i,onOpen:!1,onLoad:!1,onComplete:!1,onCleanup:!1,onClosed:!1,overlayClose:!0,escKey:!0,arrowKey:!0,top:!1,bottom:!1,left:!1,right:!1,fixed:!1,data:void 0,closeButton:!0},Y="colorbox",Z="cbox",et=Z+"Element",tt=Z+"_open",it=Z+"_load",ot=Z+"_complete",nt=Z+"_cleanup",rt=Z+"_closed",lt=Z+"_purge",ht=e("<a/>"),st="div",at=0,dt={},ct=function(){function e(){clearTimeout(n)}function t(){(B.loop||k[A+1])&&(e(),n=setTimeout(Q.next,B.slideshowSpeed))}function i(){M.html(B.slideshowStop).unbind(l).one(l,o),ht.bind(ot,t).bind(it,e).bind(nt,o),g.removeClass(r+"off").addClass(r+"on")}function o(){e(),ht.unbind(ot,t).unbind(it,e).unbind(nt,o),M.html(B.slideshowStart).unbind(l).one(l,function(){Q.next(),i()}),g.removeClass(r+"on").addClass(r+"off")}var n,r=Z+"Slideshow_",l="click."+Z,h=!1;return function(){if(h){if(B.slideshow)return;h=!1,M.hide(),e(),ht.unbind(ot,t).unbind(it,e).unbind(nt,o),g.removeClass(r+"off "+r+"on")}else B.slideshow&&k[1]&&(h=!0,B.slideshowAuto?i():o(),M.show())}}();e.colorbox||(e(f),Q=e.fn[Y]=e[Y]=function(t,i){var o=this;if(t=t||{},f(),p()){if(e.isFunction(o))o=e("<a/>"),t.open=!0;else if(!o[0])return o;i&&(t.onComplete=i),o.each(function(){e.data(this,Y,e.extend({},e.data(this,Y)||X,t))}).addClass(et),(e.isFunction(t.open)&&t.open.call(o)||t.open)&&u(o[0])}return o},Q.position=function(t,i){function o(){x[0].style.width=C[0].style.width=y[0].style.width=parseInt(g[0].style.width,10)-_+"px",y[0].style.height=b[0].style.height=T[0].style.height=parseInt(g[0].style.height,10)-O+"px"}var r,h,s,a=0,d=0,c=g.offset();if(E.unbind("resize."+Z),g.css({top:-9e4,left:-9e4}),h=E.scrollTop(),s=E.scrollLeft(),B.fixed?(c.top-=h,c.left-=s,g.css({position:"fixed"})):(a=h,d=s,g.css({position:"absolute"})),d+=B.right!==!1?Math.max(E.width()-B.w-N-_-l(B.right,"x"),0):B.left!==!1?l(B.left,"x"):Math.round(Math.max(E.width()-B.w-N-_,0)/2),a+=B.bottom!==!1?Math.max(n()-B.h-D-O-l(B.bottom,"y"),0):B.top!==!1?l(B.top,"y"):Math.round(Math.max(n()-B.h-D-O,0)/2),g.css({top:c.top,left:c.left,visibility:"visible"}),v[0].style.width=v[0].style.height="9999px",r={width:B.w+N+_,height:B.h+D+O,top:a,left:d},t){var u=0;e.each(r,function(e){return r[e]!==dt[e]?(u=t,void 0):void 0}),t=u}dt=r,t||g.css(r),g.dequeue().animate(r,{duration:t||0,complete:function(){o(),$=!1,v[0].style.width=B.w+N+_+"px",v[0].style.height=B.h+D+O+"px",B.reposition&&setTimeout(function(){E.bind("resize."+Z,Q.position)},1),i&&i()},step:o})},Q.resize=function(e){var t;U&&(e=e||{},e.width&&(B.w=l(e.width,"x")-N-_),e.innerWidth&&(B.w=l(e.innerWidth,"x")),H.css({width:B.w}),e.height&&(B.h=l(e.height,"y")-D-O),e.innerHeight&&(B.h=l(e.innerHeight,"y")),e.innerHeight||e.height||(t=H.scrollTop(),H.css({height:"auto"}),B.h=H.height()),H.css({height:B.h}),t&&H.scrollTop(t),Q.position("none"===B.transition?0:B.speed))},Q.prep=function(i){function n(){return B.w=B.w||H.width(),B.w=B.mw&&B.mw<B.w?B.mw:B.w,B.w}function l(){return B.h=B.h||H.height(),B.h=B.mh&&B.mh<B.h?B.mh:B.h,B.h}if(U){var a,d="none"===B.transition?0:B.speed;H.empty().remove(),H=o(st,"LoadedContent").append(i),H.hide().appendTo(W.show()).css({width:n(),overflow:B.scrolling?"auto":"hidden"}).css({height:l()}).prependTo(y),W.hide(),e(j).css({"float":"none"}),a=function(){function i(){e.support.opacity===!1&&g[0].style.removeAttribute("filter")}var n,l,a=k.length,u="frameBorder",f="allowTransparency";U&&(l=function(){clearTimeout(G),F.hide(),c(ot,B.onComplete)},L.html(B.title).add(H).show(),a>1?("string"==typeof B.current&&S.html(B.current.replace("{current}",A+1).replace("{total}",a)).show(),R[B.loop||a-1>A?"show":"hide"]().html(B.next),I[B.loop||A?"show":"hide"]().html(B.previous),ct(),B.preloading&&e.each([r(-1),r(1)],function(){var i,o,n=k[this],r=e.data(n,Y);r&&r.href?(i=r.href,e.isFunction(i)&&(i=i.call(n))):i=e(n).attr("href"),i&&h(r,i)&&(i=s(r,i),o=t.createElement("img"),o.src=i)})):P.hide(),B.iframe?(n=o("iframe")[0],u in n&&(n[u]=0),f in n&&(n[f]="true"),B.scrolling||(n.scrolling="no"),e(n).attr({src:B.href,name:(new Date).getTime(),"class":Z+"Iframe",allowFullScreen:!0,webkitAllowFullScreen:!0,mozallowfullscreen:!0}).one("load",l).appendTo(H),ht.one(lt,function(){n.src="//about:blank"}),B.fastIframe&&e(n).trigger("load")):l(),"fade"===B.transition?g.fadeTo(d,1,i):i())},"fade"===B.transition?g.fadeTo(d,0,function(){Q.position(0,a)}):Q.position(d,a)}},Q.next=function(){!$&&k[1]&&(B.loop||k[A+1])&&(A=r(1),u(k[A]))},Q.prev=function(){!$&&k[1]&&(B.loop||A)&&(A=r(-1),u(k[A]))},Q.close=function(){U&&!q&&(q=!0,U=!1,c(nt,B.onCleanup),E.unbind("."+Z),w.fadeTo(B.fadeOut||0,0),g.stop().fadeTo(B.fadeOut||0,0,function(){g.add(w).css({opacity:1,cursor:"auto"}).hide(),c(lt),H.empty().remove(),setTimeout(function(){q=!1,c(rt,B.onClosed)},1)}))},Q.remove=function(){g&&(g.stop(),e.colorbox.close(),g.stop().remove(),w.remove(),q=!1,g=null,e("."+et).removeData(Y).removeClass(et),e(t).unbind("click."+Z))},Q.element=function(){return e(z)},Q.settings=X)})(jQuery,document,window);
+
+/*!
+* Bootstrap.js by @fat & @mdo
+* Copyright 2013 Twitter, Inc.
+* http://www.apache.org/licenses/LICENSE-2.0.txt
+*/
+!function(e){"use strict";e(function(){e.support.transition=function(){var e=function(){var e=document.createElement("bootstrap"),t={WebkitTransition:"webkitTransitionEnd",MozTransition:"transitionend",OTransition:"oTransitionEnd otransitionend",transition:"transitionend"},n;for(n in t)if(e.style[n]!==undefined)return t[n]}();return e&&{end:e}}()})}(window.jQuery),!function(e){"use strict";var t='[data-dismiss="alert"]',n=function(n){e(n).on("click",t,this.close)};n.prototype.close=function(t){function s(){i.trigger("closed").remove()}var n=e(this),r=n.attr("data-target"),i;r||(r=n.attr("href"),r=r&&r.replace(/.*(?=#[^\s]*$)/,"")),i=e(r),t&&t.preventDefault(),i.length||(i=n.hasClass("alert")?n:n.parent()),i.trigger(t=e.Event("close"));if(t.isDefaultPrevented())return;i.removeClass("in"),e.support.transition&&i.hasClass("fade")?i.on(e.support.transition.end,s):s()};var r=e.fn.alert;e.fn.alert=function(t){return this.each(function(){var r=e(this),i=r.data("alert");i||r.data("alert",i=new n(this)),typeof t=="string"&&i[t].call(r)})},e.fn.alert.Constructor=n,e.fn.alert.noConflict=function(){return e.fn.alert=r,this},e(document).on("click.alert.data-api",t,n.prototype.close)}(window.jQuery),!function(e){"use strict";var t=function(t,n){this.$element=e(t),this.options=e.extend({},e.fn.button.defaults,n)};t.prototype.setState=function(e){var t="disabled",n=this.$element,r=n.data(),i=n.is("input")?"val":"html";e+="Text",r.resetText||n.data("resetText",n[i]()),n[i](r[e]||this.options[e]),setTimeout(function(){e=="loadingText"?n.addClass(t).attr(t,t):n.removeClass(t).removeAttr(t)},0)},t.prototype.toggle=function(){var e=this.$element.closest('[data-toggle="buttons-radio"]');e&&e.find(".active").removeClass("active"),this.$element.toggleClass("active")};var n=e.fn.button;e.fn.button=function(n){return this.each(function(){var r=e(this),i=r.data("button"),s=typeof n=="object"&&n;i||r.data("button",i=new t(this,s)),n=="toggle"?i.toggle():n&&i.setState(n)})},e.fn.button.defaults={loadingText:"loading..."},e.fn.button.Constructor=t,e.fn.button.noConflict=function(){return e.fn.button=n,this},e(document).on("click.button.data-api","[data-toggle^=button]",function(t){var n=e(t.target);n.hasClass("btn")||(n=n.closest(".btn")),n.button("toggle")})}(window.jQuery),!function(e){"use strict";var t=function(t,n){this.$element=e(t),this.$indicators=this.$element.find(".carousel-indicators"),this.options=n,this.options.pause=="hover"&&this.$element.on("mouseenter",e.proxy(this.pause,this)).on("mouseleave",e.proxy(this.cycle,this))};t.prototype={cycle:function(t){return t||(this.paused=!1),this.interval&&clearInterval(this.interval),this.options.interval&&!this.paused&&(this.interval=setInterval(e.proxy(this.next,this),this.options.interval)),this},getActiveIndex:function(){return this.$active=this.$element.find(".item.active"),this.$items=this.$active.parent().children(),this.$items.index(this.$active)},to:function(t){var n=this.getActiveIndex(),r=this;if(t>this.$items.length-1||t<0)return;return this.sliding?this.$element.one("slid",function(){r.to(t)}):n==t?this.pause().cycle():this.slide(t>n?"next":"prev",e(this.$items[t]))},pause:function(t){return t||(this.paused=!0),this.$element.find(".next, .prev").length&&e.support.transition.end&&(this.$element.trigger(e.support.transition.end),this.cycle(!0)),clearInterval(this.interval),this.interval=null,this},next:function(){if(this.sliding)return;return this.slide("next")},prev:function(){if(this.sliding)return;return this.slide("prev")},slide:function(t,n){var r=this.$element.find(".item.active"),i=n||r[t](),s=this.interval,o=t=="next"?"left":"right",u=t=="next"?"first":"last",a=this,f;this.sliding=!0,s&&this.pause(),i=i.length?i:this.$element.find(".item")[u](),f=e.Event("slide",{relatedTarget:i[0],direction:o});if(i.hasClass("active"))return;this.$indicators.length&&(this.$indicators.find(".active").removeClass("active"),this.$element.one("slid",function(){var t=e(a.$indicators.children()[a.getActiveIndex()]);t&&t.addClass("active")}));if(e.support.transition&&this.$element.hasClass("slide")){this.$element.trigger(f);if(f.isDefaultPrevented())return;i.addClass(t),i[0].offsetWidth,r.addClass(o),i.addClass(o),this.$element.one(e.support.transition.end,function(){i.removeClass([t,o].join(" ")).addClass("active"),r.removeClass(["active",o].join(" ")),a.sliding=!1,setTimeout(function(){a.$element.trigger("slid")},0)})}else{this.$element.trigger(f);if(f.isDefaultPrevented())return;r.removeClass("active"),i.addClass("active"),this.sliding=!1,this.$element.trigger("slid")}return s&&this.cycle(),this}};var n=e.fn.carousel;e.fn.carousel=function(n){return this.each(function(){var r=e(this),i=r.data("carousel"),s=e.extend({},e.fn.carousel.defaults,typeof n=="object"&&n),o=typeof n=="string"?n:s.slide;i||r.data("carousel",i=new t(this,s)),typeof n=="number"?i.to(n):o?i[o]():s.interval&&i.pause().cycle()})},e.fn.carousel.defaults={interval:5e3,pause:"hover"},e.fn.carousel.Constructor=t,e.fn.carousel.noConflict=function(){return e.fn.carousel=n,this},e(document).on("click.carousel.data-api","[data-slide], [data-slide-to]",function(t){var n=e(this),r,i=e(n.attr("data-target")||(r=n.attr("href"))&&r.replace(/.*(?=#[^\s]+$)/,"")),s=e.extend({},i.data(),n.data()),o;i.carousel(s),(o=n.attr("data-slide-to"))&&i.data("carousel").pause().to(o).cycle(),t.preventDefault()})}(window.jQuery),!function(e){"use strict";var t=function(t,n){this.$element=e(t),this.options=e.extend({},e.fn.collapse.defaults,n),this.options.parent&&(this.$parent=e(this.options.parent)),this.options.toggle&&this.toggle()};t.prototype={constructor:t,dimension:function(){var e=this.$element.hasClass("width");return e?"width":"height"},show:function(){var t,n,r,i;if(this.transitioning||this.$element.hasClass("in"))return;t=this.dimension(),n=e.camelCase(["scroll",t].join("-")),r=this.$parent&&this.$parent.find("> .accordion-group > .in");if(r&&r.length){i=r.data("collapse");if(i&&i.transitioning)return;r.collapse("hide"),i||r.data("collapse",null)}this.$element[t](0),this.transition("addClass",e.Event("show"),"shown"),e.support.transition&&this.$element[t](this.$element[0][n])},hide:function(){var t;if(this.transitioning||!this.$element.hasClass("in"))return;t=this.dimension(),this.reset(this.$element[t]()),this.transition("removeClass",e.Event("hide"),"hidden"),this.$element[t](0)},reset:function(e){var t=this.dimension();return this.$element.removeClass("collapse")[t](e||"auto")[0].offsetWidth,this.$element[e!==null?"addClass":"removeClass"]("collapse"),this},transition:function(t,n,r){var i=this,s=function(){n.type=="show"&&i.reset(),i.transitioning=0,i.$element.trigger(r)};this.$element.trigger(n);if(n.isDefaultPrevented())return;this.transitioning=1,this.$element[t]("in"),e.support.transition&&this.$element.hasClass("collapse")?this.$element.one(e.support.transition.end,s):s()},toggle:function(){this[this.$element.hasClass("in")?"hide":"show"]()}};var n=e.fn.collapse;e.fn.collapse=function(n){return this.each(function(){var r=e(this),i=r.data("collapse"),s=e.extend({},e.fn.collapse.defaults,r.data(),typeof n=="object"&&n);i||r.data("collapse",i=new t(this,s)),typeof n=="string"&&i[n]()})},e.fn.collapse.defaults={toggle:!0},e.fn.collapse.Constructor=t,e.fn.collapse.noConflict=function(){return e.fn.collapse=n,this},e(document).on("click.collapse.data-api","[data-toggle=collapse]",function(t){var n=e(this),r,i=n.attr("data-target")||t.preventDefault()||(r=n.attr("href"))&&r.replace(/.*(?=#[^\s]+$)/,""),s=e(i).data("collapse")?"toggle":n.data();n[e(i).hasClass("in")?"addClass":"removeClass"]("collapsed"),e(i).collapse(s)})}(window.jQuery),!function(e){"use strict";function r(){e(".dropdown-backdrop").remove(),e(t).each(function(){i(e(this)).removeClass("open")})}function i(t){var n=t.attr("data-target"),r;n||(n=t.attr("href"),n=n&&/#/.test(n)&&n.replace(/.*(?=#[^\s]*$)/,"")),r=n&&e(n);if(!r||!r.length)r=t.parent();return r}var t="[data-toggle=dropdown]",n=function(t){var n=e(t).on("click.dropdown.data-api",this.toggle);e("html").on("click.dropdown.data-api",function(){n.parent().removeClass("open")})};n.prototype={constructor:n,toggle:function(t){var n=e(this),s,o;if(n.is(".disabled, :disabled"))return;return s=i(n),o=s.hasClass("open"),r(),o||("ontouchstart"in document.documentElement&&e('<div class="dropdown-backdrop"/>').insertBefore(e(this)).on("click",r),s.toggleClass("open")),n.focus(),!1},keydown:function(n){var r,s,o,u,a,f;if(!/(38|40|27)/.test(n.keyCode))return;r=e(this),n.preventDefault(),n.stopPropagation();if(r.is(".disabled, :disabled"))return;u=i(r),a=u.hasClass("open");if(!a||a&&n.keyCode==27)return n.which==27&&u.find(t).focus(),r.click();s=e("[role=menu] li:not(.divider):visible a",u);if(!s.length)return;f=s.index(s.filter(":focus")),n.keyCode==38&&f>0&&f--,n.keyCode==40&&f<s.length-1&&f++,~f||(f=0),s.eq(f).focus()}};var s=e.fn.dropdown;e.fn.dropdown=function(t){return this.each(function(){var r=e(this),i=r.data("dropdown");i||r.data("dropdown",i=new n(this)),typeof t=="string"&&i[t].call(r)})},e.fn.dropdown.Constructor=n,e.fn.dropdown.noConflict=function(){return e.fn.dropdown=s,this},e(document).on("click.dropdown.data-api",r).on("click.dropdown.data-api",".dropdown form",function(e){e.stopPropagation()}).on("click.dropdown.data-api",t,n.prototype.toggle).on("keydown.dropdown.data-api",t+", [role=menu]",n.prototype.keydown)}(window.jQuery),!function(e){"use strict";var t=function(t,n){this.options=n,this.$element=e(t).delegate('[data-dismiss="modal"]',"click.dismiss.modal",e.proxy(this.hide,this)),this.options.remote&&this.$element.find(".modal-body").load(this.options.remote)};t.prototype={constructor:t,toggle:function(){return this[this.isShown?"hide":"show"]()},show:function(){var t=this,n=e.Event("show");this.$element.trigger(n);if(this.isShown||n.isDefaultPrevented())return;this.isShown=!0,this.escape(),this.backdrop(function(){var n=e.support.transition&&t.$element.hasClass("fade");t.$element.parent().length||t.$element.appendTo(document.body),t.$element.show(),n&&t.$element[0].offsetWidth,t.$element.addClass("in").attr("aria-hidden",!1),t.enforceFocus(),n?t.$element.one(e.support.transition.end,function(){t.$element.focus().trigger("shown")}):t.$element.focus().trigger("shown")})},hide:function(t){t&&t.preventDefault();var n=this;t=e.Event("hide"),this.$element.trigger(t);if(!this.isShown||t.isDefaultPrevented())return;this.isShown=!1,this.escape(),e(document).off("focusin.modal"),this.$element.removeClass("in").attr("aria-hidden",!0),e.support.transition&&this.$element.hasClass("fade")?this.hideWithTransition():this.hideModal()},enforceFocus:function(){var t=this;e(document).on("focusin.modal",function(e){t.$element[0]!==e.target&&!t.$element.has(e.target).length&&t.$element.focus()})},escape:function(){var e=this;this.isShown&&this.options.keyboard?this.$element.on("keyup.dismiss.modal",function(t){t.which==27&&e.hide()}):this.isShown||this.$element.off("keyup.dismiss.modal")},hideWithTransition:function(){var t=this,n=setTimeout(function(){t.$element.off(e.support.transition.end),t.hideModal()},500);this.$element.one(e.support.transition.end,function(){clearTimeout(n),t.hideModal()})},hideModal:function(){var e=this;this.$element.hide(),this.backdrop(function(){e.removeBackdrop(),e.$element.trigger("hidden")})},removeBackdrop:function(){this.$backdrop&&this.$backdrop.remove(),this.$backdrop=null},backdrop:function(t){var n=this,r=this.$element.hasClass("fade")?"fade":"";if(this.isShown&&this.options.backdrop){var i=e.support.transition&&r;this.$backdrop=e('<div class="modal-backdrop '+r+'" />').appendTo(document.body),this.$backdrop.click(this.options.backdrop=="static"?e.proxy(this.$element[0].focus,this.$element[0]):e.proxy(this.hide,this)),i&&this.$backdrop[0].offsetWidth,this.$backdrop.addClass("in");if(!t)return;i?this.$backdrop.one(e.support.transition.end,t):t()}else!this.isShown&&this.$backdrop?(this.$backdrop.removeClass("in"),e.support.transition&&this.$element.hasClass("fade")?this.$backdrop.one(e.support.transition.end,t):t()):t&&t()}};var n=e.fn.modal;e.fn.modal=function(n){return this.each(function(){var r=e(this),i=r.data("modal"),s=e.extend({},e.fn.modal.defaults,r.data(),typeof n=="object"&&n);i||r.data("modal",i=new t(this,s)),typeof n=="string"?i[n]():s.show&&i.show()})},e.fn.modal.defaults={backdrop:!0,keyboard:!0,show:!0},e.fn.modal.Constructor=t,e.fn.modal.noConflict=function(){return e.fn.modal=n,this},e(document).on("click.modal.data-api",'[data-toggle="modal"]',function(t){var n=e(this),r=n.attr("href"),i=e(n.attr("data-target")||r&&r.replace(/.*(?=#[^\s]+$)/,"")),s=i.data("modal")?"toggle":e.extend({remote:!/#/.test(r)&&r},i.data(),n.data());t.preventDefault(),i.modal(s).one("hide",function(){n.focus()})})}(window.jQuery),!function(e){"use strict";var t=function(e,t){this.init("tooltip",e,t)};t.prototype={constructor:t,init:function(t,n,r){var i,s,o,u,a;this.type=t,this.$element=e(n),this.options=this.getOptions(r),this.enabled=!0,o=this.options.trigger.split(" ");for(a=o.length;a--;)u=o[a],u=="click"?this.$element.on("click."+this.type,this.options.selector,e.proxy(this.toggle,this)):u!="manual"&&(i=u=="hover"?"mouseenter":"focus",s=u=="hover"?"mouseleave":"blur",this.$element.on(i+"."+this.type,this.options.selector,e.proxy(this.enter,this)),this.$element.on(s+"."+this.type,this.options.selector,e.proxy(this.leave,this)));this.options.selector?this._options=e.extend({},this.options,{trigger:"manual",selector:""}):this.fixTitle()},getOptions:function(t){return t=e.extend({},e.fn[this.type].defaults,this.$element.data(),t),t.delay&&typeof t.delay=="number"&&(t.delay={show:t.delay,hide:t.delay}),t},enter:function(t){var n=e.fn[this.type].defaults,r={},i;this._options&&e.each(this._options,function(e,t){n[e]!=t&&(r[e]=t)},this),i=e(t.currentTarget)[this.type](r).data(this.type);if(!i.options.delay||!i.options.delay.show)return i.show();clearTimeout(this.timeout),i.hoverState="in",this.timeout=setTimeout(function(){i.hoverState=="in"&&i.show()},i.options.delay.show)},leave:function(t){var n=e(t.currentTarget)[this.type](this._options).data(this.type);this.timeout&&clearTimeout(this.timeout);if(!n.options.delay||!n.options.delay.hide)return n.hide();n.hoverState="out",this.timeout=setTimeout(function(){n.hoverState=="out"&&n.hide()},n.options.delay.hide)},show:function(){var t,n,r,i,s,o,u=e.Event("show");if(this.hasContent()&&this.enabled){this.$element.trigger(u);if(u.isDefaultPrevented())return;t=this.tip(),this.setContent(),this.options.animation&&t.addClass("fade"),s=typeof this.options.placement=="function"?this.options.placement.call(this,t[0],this.$element[0]):this.options.placement,t.detach().css({top:0,left:0,display:"block"}),this.options.container?t.appendTo(this.options.container):t.insertAfter(this.$element),n=this.getPosition(),r=t[0].offsetWidth,i=t[0].offsetHeight;switch(s){case"bottom":o={top:n.top+n.height,left:n.left+n.width/2-r/2};break;case"top":o={top:n.top-i,left:n.left+n.width/2-r/2};break;case"left":o={top:n.top+n.height/2-i/2,left:n.left-r};break;case"right":o={top:n.top+n.height/2-i/2,left:n.left+n.width}}this.applyPlacement(o,s),this.$element.trigger("shown")}},applyPlacement:function(e,t){var n=this.tip(),r=n[0].offsetWidth,i=n[0].offsetHeight,s,o,u,a;n.offset(e).addClass(t).addClass("in"),s=n[0].offsetWidth,o=n[0].offsetHeight,t=="top"&&o!=i&&(e.top=e.top+i-o,a=!0),t=="bottom"||t=="top"?(u=0,e.left<0&&(u=e.left*-2,e.left=0,n.offset(e),s=n[0].offsetWidth,o=n[0].offsetHeight),this.replaceArrow(u-r+s,s,"left")):this.replaceArrow(o-i,o,"top"),a&&n.offset(e)},replaceArrow:function(e,t,n){this.arrow().css(n,e?50*(1-e/t)+"%":"")},setContent:function(){var e=this.tip(),t=this.getTitle();e.find(".tooltip-inner")[this.options.html?"html":"text"](t),e.removeClass("fade in top bottom left right")},hide:function(){function i(){var t=setTimeout(function(){n.off(e.support.transition.end).detach()},500);n.one(e.support.transition.end,function(){clearTimeout(t),n.detach()})}var t=this,n=this.tip(),r=e.Event("hide");this.$element.trigger(r);if(r.isDefaultPrevented())return;return n.removeClass("in"),e.support.transition&&this.$tip.hasClass("fade")?i():n.detach(),this.$element.trigger("hidden"),this},fixTitle:function(){var e=this.$element;(e.attr("title")||typeof e.attr("data-original-title")!="string")&&e.attr("data-original-title",e.attr("title")||"").attr("title","")},hasContent:function(){return this.getTitle()},getPosition:function(){var t=this.$element[0];return e.extend({},typeof t.getBoundingClientRect=="function"?t.getBoundingClientRect():{width:t.offsetWidth,height:t.offsetHeight},this.$element.offset())},getTitle:function(){var e,t=this.$element,n=this.options;return e=t.attr("data-original-title")||(typeof n.title=="function"?n.title.call(t[0]):n.title),e},tip:function(){return this.$tip=this.$tip||e(this.options.template)},arrow:function(){return this.$arrow=this.$arrow||this.tip().find(".tooltip-arrow")},validate:function(){this.$element[0].parentNode||(this.hide(),this.$element=null,this.options=null)},enable:function(){this.enabled=!0},disable:function(){this.enabled=!1},toggleEnabled:function(){this.enabled=!this.enabled},toggle:function(t){var n=t?e(t.currentTarget)[this.type](this._options).data(this.type):this;n.tip().hasClass("in")?n.hide():n.show()},destroy:function(){this.hide().$element.off("."+this.type).removeData(this.type)}};var n=e.fn.tooltip;e.fn.tooltip=function(n){return this.each(function(){var r=e(this),i=r.data("tooltip"),s=typeof n=="object"&&n;i||r.data("tooltip",i=new t(this,s)),typeof n=="string"&&i[n]()})},e.fn.tooltip.Constructor=t,e.fn.tooltip.defaults={animation:!0,placement:"top",selector:!1,template:'<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',trigger:"hover focus",title:"",delay:0,html:!1,container:!1},e.fn.tooltip.noConflict=function(){return e.fn.tooltip=n,this}}(window.jQuery),!function(e){"use strict";var t=function(e,t){this.init("popover",e,t)};t.prototype=e.extend({},e.fn.tooltip.Constructor.prototype,{constructor:t,setContent:function(){var e=this.tip(),t=this.getTitle(),n=this.getContent();e.find(".popover-title")[this.options.html?"html":"text"](t),e.find(".popover-content")[this.options.html?"html":"text"](n),e.removeClass("fade top bottom left right in")},hasContent:function(){return this.getTitle()||this.getContent()},getContent:function(){var e,t=this.$element,n=this.options;return e=(typeof n.content=="function"?n.content.call(t[0]):n.content)||t.attr("data-content"),e},tip:function(){return this.$tip||(this.$tip=e(this.options.template)),this.$tip},destroy:function(){this.hide().$element.off("."+this.type).removeData(this.type)}});var n=e.fn.popover;e.fn.popover=function(n){return this.each(function(){var r=e(this),i=r.data("popover"),s=typeof n=="object"&&n;i||r.data("popover",i=new t(this,s)),typeof n=="string"&&i[n]()})},e.fn.popover.Constructor=t,e.fn.popover.defaults=e.extend({},e.fn.tooltip.defaults,{placement:"right",trigger:"click",content:"",template:'<div class="popover"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'}),e.fn.popover.noConflict=function(){return e.fn.popover=n,this}}(window.jQuery),!function(e){"use strict";function t(t,n){var r=e.proxy(this.process,this),i=e(t).is("body")?e(window):e(t),s;this.options=e.extend({},e.fn.scrollspy.defaults,n),this.$scrollElement=i.on("scroll.scroll-spy.data-api",r),this.selector=(this.options.target||(s=e(t).attr("href"))&&s.replace(/.*(?=#[^\s]+$)/,"")||"")+" .nav li > a",this.$body=e("body"),this.refresh(),this.process()}t.prototype={constructor:t,refresh:function(){var t=this,n;this.offsets=e([]),this.targets=e([]),n=this.$body.find(this.selector).map(function(){var n=e(this),r=n.data("target")||n.attr("href"),i=/^#\w/.test(r)&&e(r);return i&&i.length&&[[i.position().top+(!e.isWindow(t.$scrollElement.get(0))&&t.$scrollElement.scrollTop()),r]]||null}).sort(function(e,t){return e[0]-t[0]}).each(function(){t.offsets.push(this[0]),t.targets.push(this[1])})},process:function(){var e=this.$scrollElement.scrollTop()+this.options.offset,t=this.$scrollElement[0].scrollHeight||this.$body[0].scrollHeight,n=t-this.$scrollElement.height(),r=this.offsets,i=this.targets,s=this.activeTarget,o;if(e>=n)return s!=(o=i.last()[0])&&this.activate(o);for(o=r.length;o--;)s!=i[o]&&e>=r[o]&&(!r[o+1]||e<=r[o+1])&&this.activate(i[o])},activate:function(t){var n,r;this.activeTarget=t,e(this.selector).parent(".active").removeClass("active"),r=this.selector+'[data-target="'+t+'"],'+this.selector+'[href="'+t+'"]',n=e(r).parent("li").addClass("active"),n.parent(".dropdown-menu").length&&(n=n.closest("li.dropdown").addClass("active")),n.trigger("activate")}};var n=e.fn.scrollspy;e.fn.scrollspy=function(n){return this.each(function(){var r=e(this),i=r.data("scrollspy"),s=typeof n=="object"&&n;i||r.data("scrollspy",i=new t(this,s)),typeof n=="string"&&i[n]()})},e.fn.scrollspy.Constructor=t,e.fn.scrollspy.defaults={offset:10},e.fn.scrollspy.noConflict=function(){return e.fn.scrollspy=n,this},e(window).on("load",function(){e('[data-spy="scroll"]').each(function(){var t=e(this);t.scrollspy(t.data())})})}(window.jQuery),!function(e){"use strict";var t=function(t){this.element=e(t)};t.prototype={constructor:t,show:function(){var t=this.element,n=t.closest("ul:not(.dropdown-menu)"),r=t.attr("data-target"),i,s,o;r||(r=t.attr("href"),r=r&&r.replace(/.*(?=#[^\s]*$)/,""));if(t.parent("li").hasClass("active"))return;i=n.find(".active:last a")[0],o=e.Event("show",{relatedTarget:i}),t.trigger(o);if(o.isDefaultPrevented())return;s=e(r),this.activate(t.parent("li"),n),this.activate(s,s.parent(),function(){t.trigger({type:"shown",relatedTarget:i})})},activate:function(t,n,r){function o(){i.removeClass("active").find("> .dropdown-menu > .active").removeClass("active"),t.addClass("active"),s?(t[0].offsetWidth,t.addClass("in")):t.removeClass("fade"),t.parent(".dropdown-menu")&&t.closest("li.dropdown").addClass("active"),r&&r()}var i=n.find("> .active"),s=r&&e.support.transition&&i.hasClass("fade");s?i.one(e.support.transition.end,o):o(),i.removeClass("in")}};var n=e.fn.tab;e.fn.tab=function(n){return this.each(function(){var r=e(this),i=r.data("tab");i||r.data("tab",i=new t(this)),typeof n=="string"&&i[n]()})},e.fn.tab.Constructor=t,e.fn.tab.noConflict=function(){return e.fn.tab=n,this},e(document).on("click.tab.data-api",'[data-toggle="tab"], [data-toggle="pill"]',function(t){t.preventDefault(),e(this).tab("show")})}(window.jQuery),!function(e){"use strict";var t=function(t,n){this.$element=e(t),this.options=e.extend({},e.fn.typeahead.defaults,n),this.matcher=this.options.matcher||this.matcher,this.sorter=this.options.sorter||this.sorter,this.highlighter=this.options.highlighter||this.highlighter,this.updater=this.options.updater||this.updater,this.source=this.options.source,this.$menu=e(this.options.menu),this.shown=!1,this.listen()};t.prototype={constructor:t,select:function(){var e=this.$menu.find(".active").attr("data-value");return this.$element.val(this.updater(e)).change(),this.hide()},updater:function(e){return e},show:function(){var t=e.extend({},this.$element.position(),{height:this.$element[0].offsetHeight});return this.$menu.insertAfter(this.$element).css({top:t.top+t.height,left:t.left}).show(),this.shown=!0,this},hide:function(){return this.$menu.hide(),this.shown=!1,this},lookup:function(t){var n;return this.query=this.$element.val(),!this.query||this.query.length<this.options.minLength?this.shown?this.hide():this:(n=e.isFunction(this.source)?this.source(this.query,e.proxy(this.process,this)):this.source,n?this.process(n):this)},process:function(t){var n=this;return t=e.grep(t,function(e){return n.matcher(e)}),t=this.sorter(t),t.length?this.render(t.slice(0,this.options.items)).show():this.shown?this.hide():this},matcher:function(e){return~e.toLowerCase().indexOf(this.query.toLowerCase())},sorter:function(e){var t=[],n=[],r=[],i;while(i=e.shift())i.toLowerCase().indexOf(this.query.toLowerCase())?~i.indexOf(this.query)?n.push(i):r.push(i):t.push(i);return t.concat(n,r)},highlighter:function(e){var t=this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g,"\\$&");return e.replace(new RegExp("("+t+")","ig"),function(e,t){return"<strong>"+t+"</strong>"})},render:function(t){var n=this;return t=e(t).map(function(t,r){return t=e(n.options.item).attr("data-value",r),t.find("a").html(n.highlighter(r)),t[0]}),t.first().addClass("active"),this.$menu.html(t),this},next:function(t){var n=this.$menu.find(".active").removeClass("active"),r=n.next();r.length||(r=e(this.$menu.find("li")[0])),r.addClass("active")},prev:function(e){var t=this.$menu.find(".active").removeClass("active"),n=t.prev();n.length||(n=this.$menu.find("li").last()),n.addClass("active")},listen:function(){this.$element.on("focus",e.proxy(this.focus,this)).on("blur",e.proxy(this.blur,this)).on("keypress",e.proxy(this.keypress,this)).on("keyup",e.proxy(this.keyup,this)),this.eventSupported("keydown")&&this.$element.on("keydown",e.proxy(this.keydown,this)),this.$menu.on("click",e.proxy(this.click,this)).on("mouseenter","li",e.proxy(this.mouseenter,this)).on("mouseleave","li",e.proxy(this.mouseleave,this))},eventSupported:function(e){var t=e in this.$element;return t||(this.$element.setAttribute(e,"return;"),t=typeof this.$element[e]=="function"),t},move:function(e){if(!this.shown)return;switch(e.keyCode){case 9:case 13:case 27:e.preventDefault();break;case 38:e.preventDefault(),this.prev();break;case 40:e.preventDefault(),this.next()}e.stopPropagation()},keydown:function(t){this.suppressKeyPressRepeat=~e.inArray(t.keyCode,[40,38,9,13,27]),this.move(t)},keypress:function(e){if(this.suppressKeyPressRepeat)return;this.move(e)},keyup:function(e){switch(e.keyCode){case 40:case 38:case 16:case 17:case 18:break;case 9:case 13:if(!this.shown)return;this.select();break;case 27:if(!this.shown)return;this.hide();break;default:this.lookup()}e.stopPropagation(),e.preventDefault()},focus:function(e){this.focused=!0},blur:function(e){this.focused=!1,!this.mousedover&&this.shown&&this.hide()},click:function(e){e.stopPropagation(),e.preventDefault(),this.select(),this.$element.focus()},mouseenter:function(t){this.mousedover=!0,this.$menu.find(".active").removeClass("active"),e(t.currentTarget).addClass("active")},mouseleave:function(e){this.mousedover=!1,!this.focused&&this.shown&&this.hide()}};var n=e.fn.typeahead;e.fn.typeahead=function(n){return this.each(function(){var r=e(this),i=r.data("typeahead"),s=typeof n=="object"&&n;i||r.data("typeahead",i=new t(this,s)),typeof n=="string"&&i[n]()})},e.fn.typeahead.defaults={source:[],items:8,menu:'<ul class="typeahead dropdown-menu"></ul>',item:'<li><a href="#"></a></li>',minLength:1},e.fn.typeahead.Constructor=t,e.fn.typeahead.noConflict=function(){return e.fn.typeahead=n,this},e(document).on("focus.typeahead.data-api",'[data-provide="typeahead"]',function(t){var n=e(this);if(n.data("typeahead"))return;n.typeahead(n.data())})}(window.jQuery),!function(e){"use strict";var t=function(t,n){this.options=e.extend({},e.fn.affix.defaults,n),this.$window=e(window).on("scroll.affix.data-api",e.proxy(this.checkPosition,this)).on("click.affix.data-api",e.proxy(function(){setTimeout(e.proxy(this.checkPosition,this),1)},this)),this.$element=e(t),this.checkPosition()};t.prototype.checkPosition=function(){if(!this.$element.is(":visible"))return;var t=e(document).height(),n=this.$window.scrollTop(),r=this.$element.offset(),i=this.options.offset,s=i.bottom,o=i.top,u="affix affix-top affix-bottom",a;typeof i!="object"&&(s=o=i),typeof o=="function"&&(o=i.top()),typeof s=="function"&&(s=i.bottom()),a=this.unpin!=null&&n+this.unpin<=r.top?!1:s!=null&&r.top+this.$element.height()>=t-s?"bottom":o!=null&&n<=o?"top":!1;if(this.affixed===a)return;this.affixed=a,this.unpin=a=="bottom"?r.top-n:null,this.$element.removeClass(u).addClass("affix"+(a?"-"+a:""))};var n=e.fn.affix;e.fn.affix=function(n){return this.each(function(){var r=e(this),i=r.data("affix"),s=typeof n=="object"&&n;i||r.data("affix",i=new t(this,s)),typeof n=="string"&&i[n]()})},e.fn.affix.Constructor=t,e.fn.affix.defaults={offset:0},e.fn.affix.noConflict=function(){return e.fn.affix=n,this},e(window).on("load",function(){e('[data-spy="affix"]').each(function(){var t=e(this),n=t.data();n.offset=n.offset||{},n.offsetBottom&&(n.offset.bottom=n.offsetBottom),n.offsetTop&&(n.offset.top=n.offsetTop),t.affix(n)})})}(window.jQuery);
+
+/*
+ * jQuery Autocomplete plugin 1.1
+ *
+ * Copyright (c) 2009 JÃ¶rn Zaefferer
+ *
+ * Dual licensed under the MIT and GPL licenses:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ *
+ * Revision: $Id: jquery.autocomplete.js 14 2009-08-22 10:29:29Z joern.zaefferer $
+ */
+
+;(function($) {
+	
+$.fn.extend({
+	autocomplete: function(urlOrData, options) {
+		var isUrl = typeof urlOrData == "string";
+		options = $.extend({}, $.Autocompleter.defaults, {
+			url: isUrl ? urlOrData : null,
+			data: isUrl ? null : urlOrData,
+			delay: isUrl ? $.Autocompleter.defaults.delay : 10,
+			max: options && !options.scroll ? 10 : 150
+		}, options);
+		
+		// if highlight is set to false, replace it with a do-nothing function
+		options.highlight = options.highlight || function(value) { return value; };
+		
+		// if the formatMatch option is not specified, then use formatItem for backwards compatibility
+		options.formatMatch = options.formatMatch || options.formatItem;
+		
+		return this.each(function() {
+			new $.Autocompleter(this, options);
+		});
+	},
+	result: function(handler) {
+		return this.bind("result", handler);
+	},
+	search: function(handler) {
+		return this.trigger("search", [handler]);
+	},
+	flushCache: function() {
+		return this.trigger("flushCache");
+	},
+	setOptions: function(options){
+		return this.trigger("setOptions", [options]);
+	},
+	unautocomplete: function() {
+		return this.trigger("unautocomplete");
+	}
+});
+
+$.Autocompleter = function(input, options) {
+
+	var KEY = {
+		UP: 38,
+		DOWN: 40,
+		DEL: 46,
+		TAB: 9,
+		RETURN: 13,
+		ESC: 27,
+		COMMA: 188,
+		PAGEUP: 33,
+		PAGEDOWN: 34,
+		BACKSPACE: 8
+	};
+
+	// Create $ object for input element
+	var $input = $(input).attr("autocomplete", "off").addClass(options.inputClass);
+
+	var timeout;
+	var previousValue = "";
+	var cache = $.Autocompleter.Cache(options);
+	var hasFocus = 0;
+	var lastKeyPressCode;
+	var config = {
+		mouseDownOnSelect: false
+	};
+	var select = $.Autocompleter.Select(options, input, selectCurrent, config);
+	
+	var blockSubmit;
+	
+	// prevent form submit in opera when selecting with return key
+	/*
+	$.browser.opera && $(input.form).bind("submit.autocomplete", function() {
+		if (blockSubmit) {
+			blockSubmit = false;
+			return false;
+		}
+	});
+	*/
+	
+	// only opera doesn't trigger keydown multiple times while pressed, others don't work with keypress at all
+	$input.bind(("keydown") + ".autocomplete", function(event) {
+		// a keypress means the input has focus
+		// avoids issue where input had focus before the autocomplete was applied
+		hasFocus = 1;
+		// track last key pressed
+		lastKeyPressCode = event.keyCode;
+		switch(event.keyCode) {
+		
+			case KEY.UP:
+				event.preventDefault();
+				if ( select.visible() ) {
+					select.prev();
+				} else {
+					onChange(0, true);
+				}
+				break;
+				
+			case KEY.DOWN:
+				event.preventDefault();
+				if ( select.visible() ) {
+					select.next();
+				} else {
+					onChange(0, true);
+				}
+				break;
+				
+			case KEY.PAGEUP:
+				event.preventDefault();
+				if ( select.visible() ) {
+					select.pageUp();
+				} else {
+					onChange(0, true);
+				}
+				break;
+				
+			case KEY.PAGEDOWN:
+				event.preventDefault();
+				if ( select.visible() ) {
+					select.pageDown();
+				} else {
+					onChange(0, true);
+				}
+				break;
+			
+			// matches also semicolon
+			case options.multiple && $.trim(options.multipleSeparator) == "," && KEY.COMMA:
+			case KEY.TAB:
+			case KEY.RETURN:
+				if( selectCurrent() ) {
+					// stop default to prevent a form submit, Opera needs special handling
+					event.preventDefault();
+					blockSubmit = true;
+					return false;
+				}
+				break;
+				
+			case KEY.ESC:
+				select.hide();
+				break;
+				
+			default:
+				clearTimeout(timeout);
+				timeout = setTimeout(onChange, options.delay);
+				break;
+		}
+	}).focus(function(){
+		// track whether the field has focus, we shouldn't process any
+		// results if the field no longer has focus
+		hasFocus++;
+	}).blur(function() {
+		hasFocus = 0;
+		if (!config.mouseDownOnSelect) {
+			hideResults();
+		}
+	}).click(function() {
+		// show select when clicking in a focused field
+		if ( hasFocus++ > 1 && !select.visible() ) {
+			onChange(0, true);
+		}
+	}).bind("search", function() {
+		// TODO why not just specifying both arguments?
+		var fn = (arguments.length > 1) ? arguments[1] : null;
+		function findValueCallback(q, data) {
+			var result;
+			if( data && data.length ) {
+				for (var i=0; i < data.length; i++) {
+					if( data[i].result.toLowerCase() == q.toLowerCase() ) {
+						result = data[i];
+						break;
+					}
+				}
+			}
+			if( typeof fn == "function" ) fn(result);
+			else $input.trigger("result", result && [result.data, result.value]);
+		}
+		$.each(trimWords($input.val()), function(i, value) {
+			request(value, findValueCallback, findValueCallback);
+		});
+	}).bind("flushCache", function() {
+		cache.flush();
+	}).bind("setOptions", function() {
+		$.extend(options, arguments[1]);
+		// if we've updated the data, repopulate
+		if ( "data" in arguments[1] )
+			cache.populate();
+	}).bind("unautocomplete", function() {
+		select.unbind();
+		$input.unbind();
+		$(input.form).unbind(".autocomplete");
+	});
+	
+	
+	function selectCurrent() {
+		var selected = select.selected();
+		if( !selected )
+			return false;
+		
+		var v = selected.result;
+		previousValue = v;
+		
+		if ( options.multiple ) {
+			var words = trimWords($input.val());
+			if ( words.length > 1 ) {
+				var seperator = options.multipleSeparator.length;
+				var cursorAt = $(input).selection().start;
+				var wordAt, progress = 0;
+				$.each(words, function(i, word) {
+					progress += word.length;
+					if (cursorAt <= progress) {
+						wordAt = i;
+						return false;
+					}
+					progress += seperator;
+				});
+				words[wordAt] = v;
+				// TODO this should set the cursor to the right position, but it gets overriden somewhere
+				//$.Autocompleter.Selection(input, progress + seperator, progress + seperator);
+				v = words.join( options.multipleSeparator );
+			}
+			v += options.multipleSeparator;
+		}
+		
+		$input.val(v);
+		hideResultsNow();
+		$input.trigger("result", [selected.data, selected.value]);
+		return true;
+	}
+	
+	function onChange(crap, skipPrevCheck) {
+		if( lastKeyPressCode == KEY.DEL ) {
+			select.hide();
+			return;
+		}
+		
+		var currentValue = $input.val();
+		
+		if ( !skipPrevCheck && currentValue == previousValue )
+			return;
+		
+		previousValue = currentValue;
+		
+		currentValue = lastWord(currentValue);
+		if ( currentValue.length >= options.minChars) {
+			$input.addClass(options.loadingClass);
+			if (!options.matchCase)
+				currentValue = currentValue.toLowerCase();
+			request(currentValue, receiveData, hideResultsNow);
+		} else {
+			stopLoading();
+			select.hide();
+		}
+	};
+	
+	function trimWords(value) {
+		if (!value)
+			return [""];
+		if (!options.multiple)
+			return [$.trim(value)];
+		return $.map(value.split(options.multipleSeparator), function(word) {
+			return $.trim(value).length ? $.trim(word) : null;
+		});
+	}
+	
+	function lastWord(value) {
+		if ( !options.multiple )
+			return value;
+		var words = trimWords(value);
+		if (words.length == 1) 
+			return words[0];
+		var cursorAt = $(input).selection().start;
+		if (cursorAt == value.length) {
+			words = trimWords(value)
+		} else {
+			words = trimWords(value.replace(value.substring(cursorAt), ""));
+		}
+		return words[words.length - 1];
+	}
+	
+	// fills in the input box w/the first match (assumed to be the best match)
+	// q: the term entered
+	// sValue: the first matching result
+	function autoFill(q, sValue){
+		// autofill in the complete box w/the first match as long as the user hasn't entered in more data
+		// if the last user key pressed was backspace, don't autofill
+		if( options.autoFill && (lastWord($input.val()).toLowerCase() == q.toLowerCase()) && lastKeyPressCode != KEY.BACKSPACE ) {
+			// fill in the value (keep the case the user has typed)
+			$input.val($input.val() + sValue.substring(lastWord(previousValue).length));
+			// select the portion of the value not typed by the user (so the next character will erase)
+			$(input).selection(previousValue.length, previousValue.length + sValue.length);
+		}
+	};
+
+	function hideResults() {
+		clearTimeout(timeout);
+		timeout = setTimeout(hideResultsNow, 200);
+	};
+
+	function hideResultsNow() {
+		var wasVisible = select.visible();
+		select.hide();
+		clearTimeout(timeout);
+		stopLoading();
+		if (options.mustMatch) {
+			// call search and run callback
+			$input.search(
+				function (result){
+					// if no value found, clear the input box
+					if( !result ) {
+						if (options.multiple) {
+							var words = trimWords($input.val()).slice(0, -1);
+							$input.val( words.join(options.multipleSeparator) + (words.length ? options.multipleSeparator : "") );
+						}
+						else {
+							$input.val( "" );
+							$input.trigger("result", null);
+						}
+					}
+				}
+			);
+		}
+	};
+
+	function receiveData(q, data) {
+		if ( data && data.length && hasFocus ) {
+			stopLoading();
+			select.display(data, q);
+			autoFill(q, data[0].value);
+			select.show();
+		} else {
+			hideResultsNow();
+		}
+	};
+
+	function request(term, success, failure) {
+		if (!options.matchCase)
+			term = term.toLowerCase();
+		var data = cache.load(term);
+		// recieve the cached data
+		if (data && data.length) {
+			success(term, data);
+		// if an AJAX url has been supplied, try loading the data now
+		} else if( (typeof options.url == "string") && (options.url.length > 0) ){
+			
+			var extraParams = {
+				timestamp: +new Date()
+			};
+			$.each(options.extraParams, function(key, param) {
+				extraParams[key] = typeof param == "function" ? param() : param;
+			});
+			
+			$.ajax({
+				// try to leverage ajaxQueue plugin to abort previous requests
+				mode: "abort",
+				// limit abortion to this input
+				port: "autocomplete" + input.name,
+				dataType: options.dataType,
+				url: options.url,
+				data: $.extend({
+					q: lastWord(term),
+					limit: options.max
+				}, extraParams),
+				success: function(data) {
+					var parsed = options.parse && options.parse(data) || parse(data);
+					cache.add(term, parsed);
+					success(term, parsed);
+				}
+			});
+		} else {
+			// if we have a failure, we need to empty the list -- this prevents the the [TAB] key from selecting the last successful match
+			select.emptyList();
+			failure(term);
+		}
+	};
+	
+	function parse(data) {
+		var parsed = [];
+		var rows = data.split("\n");
+		for (var i=0; i < rows.length; i++) {
+			var row = $.trim(rows[i]);
+			if (row) {
+				row = row.split("|");
+				parsed[parsed.length] = {
+					data: row,
+					value: row[0],
+					result: options.formatResult && options.formatResult(row, row[0]) || row[0]
+				};
+			}
+		}
+		return parsed;
+	};
+
+	function stopLoading() {
+		$input.removeClass(options.loadingClass);
+	};
+
+};
+
+$.Autocompleter.defaults = {
+	inputClass: "ac_input",
+	resultsClass: "ac_results",
+	loadingClass: "ac_loading",
+	minChars: 1,
+	delay: 400,
+	matchCase: false,
+	matchSubset: true,
+	matchContains: false,
+	cacheLength: 10,
+	max: 100,
+	mustMatch: false,
+	extraParams: {},
+	selectFirst: true,
+	formatItem: function(row) { return row[0]; },
+	formatMatch: null,
+	autoFill: false,
+	width: 0,
+	multiple: false,
+	multipleSeparator: ", ",
+	highlight: function(value, term) {
+		return value.replace(new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + term.replace(/([\^\$\(\)\[\]\{\}\*\.\+\?\|\\])/gi, "\\$1") + ")(?![^<>]*>)(?![^&;]+;)", "gi"), "<strong>$1</strong>");
+	},
+    scroll: true,
+    scrollHeight: 180
+};
+
+$.Autocompleter.Cache = function(options) {
+
+	var data = {};
+	var length = 0;
+	
+	function matchSubset(s, sub) {
+		if (!options.matchCase) 
+			s = s.toLowerCase();
+		var i = s.indexOf(sub);
+		if (options.matchContains == "word"){
+			i = s.toLowerCase().search("\\b" + sub.toLowerCase());
+		}
+		if (i == -1) return false;
+		return i == 0 || options.matchContains;
+	};
+	
+	function add(q, value) {
+		if (length > options.cacheLength){
+			flush();
+		}
+		if (!data[q]){ 
+			length++;
+		}
+		data[q] = value;
+	}
+	
+	function populate(){
+		if( !options.data ) return false;
+		// track the matches
+		var stMatchSets = {},
+			nullData = 0;
+
+		// no url was specified, we need to adjust the cache length to make sure it fits the local data store
+		if( !options.url ) options.cacheLength = 1;
+		
+		// track all options for minChars = 0
+		stMatchSets[""] = [];
+		
+		// loop through the array and create a lookup structure
+		for ( var i = 0, ol = options.data.length; i < ol; i++ ) {
+			var rawValue = options.data[i];
+			// if rawValue is a string, make an array otherwise just reference the array
+			rawValue = (typeof rawValue == "string") ? [rawValue] : rawValue;
+			
+			var value = options.formatMatch(rawValue, i+1, options.data.length);
+			if ( value === false )
+				continue;
+				
+			var firstChar = value.charAt(0).toLowerCase();
+			// if no lookup array for this character exists, look it up now
+			if( !stMatchSets[firstChar] ) 
+				stMatchSets[firstChar] = [];
+
+			// if the match is a string
+			var row = {
+				value: value,
+				data: rawValue,
+				result: options.formatResult && options.formatResult(rawValue) || value
+			};
+			
+			// push the current match into the set list
+			stMatchSets[firstChar].push(row);
+
+			// keep track of minChars zero items
+			if ( nullData++ < options.max ) {
+				stMatchSets[""].push(row);
+			}
+		};
+
+		// add the data items to the cache
+		$.each(stMatchSets, function(i, value) {
+			// increase the cache size
+			options.cacheLength++;
+			// add to the cache
+			add(i, value);
+		});
+	}
+	
+	// populate any existing data
+	setTimeout(populate, 25);
+	
+	function flush(){
+		data = {};
+		length = 0;
+	}
+	
+	return {
+		flush: flush,
+		add: add,
+		populate: populate,
+		load: function(q) {
+			if (!options.cacheLength || !length)
+				return null;
+			/* 
+			 * if dealing w/local data and matchContains than we must make sure
+			 * to loop through all the data collections looking for matches
+			 */
+			if( !options.url && options.matchContains ){
+				// track all matches
+				var csub = [];
+				// loop through all the data grids for matches
+				for( var k in data ){
+					// don't search through the stMatchSets[""] (minChars: 0) cache
+					// this prevents duplicates
+					if( k.length > 0 ){
+						var c = data[k];
+						$.each(c, function(i, x) {
+							// if we've got a match, add it to the array
+							if (matchSubset(x.value, q)) {
+								csub.push(x);
+							}
+						});
+					}
+				}				
+				return csub;
+			} else 
+			// if the exact item exists, use it
+			if (data[q]){
+				return data[q];
+			} else
+			if (options.matchSubset) {
+				for (var i = q.length - 1; i >= options.minChars; i--) {
+					var c = data[q.substr(0, i)];
+					if (c) {
+						var csub = [];
+						$.each(c, function(i, x) {
+							if (matchSubset(x.value, q)) {
+								csub[csub.length] = x;
+							}
+						});
+						return csub;
+					}
+				}
+			}
+			return null;
+		}
+	};
+};
+
+$.Autocompleter.Select = function (options, input, select, config) {
+	var CLASSES = {
+		ACTIVE: "ac_over"
+	};
+	
+	var listItems,
+		active = -1,
+		data,
+		term = "",
+		needsInit = true,
+		element,
+		list;
+	
+	// Create results
+	function init() {
+		if (!needsInit)
+			return;
+		element = $("<div/>")
+		.hide()
+		.addClass(options.resultsClass)
+		.css("position", "fixed")
+		.appendTo(document.body);
+	
+		list = $("<ul/>").appendTo(element).mouseover( function(event) {
+			if(target(event).nodeName && target(event).nodeName.toUpperCase() == 'LI') {
+	            active = $("li", list).removeClass(CLASSES.ACTIVE).index(target(event));
+			    $(target(event)).addClass(CLASSES.ACTIVE);            
+	        }
+		}).click(function(event) {
+			$(target(event)).addClass(CLASSES.ACTIVE);
+			select();
+			// TODO provide option to avoid setting focus again after selection? useful for cleanup-on-focus
+			input.focus();
+			return false;
+		}).mousedown(function() {
+			config.mouseDownOnSelect = true;
+		}).mouseup(function() {
+			config.mouseDownOnSelect = false;
+		});
+		
+		if( options.width > 0 )
+			element.css("width", options.width);
+			
+		needsInit = false;
+	} 
+	
+	function target(event) {
+		var element = event.target;
+		while(element && element.tagName != "LI")
+			element = element.parentNode;
+		// more fun with IE, sometimes event.target is empty, just ignore it then
+		if(!element)
+			return [];
+		return element;
+	}
+
+	function moveSelect(step) {
+		listItems.slice(active, active + 1).removeClass(CLASSES.ACTIVE);
+		movePosition(step);
+        var activeItem = listItems.slice(active, active + 1).addClass(CLASSES.ACTIVE);
+        if(options.scroll) {
+            var offset = 0;
+            listItems.slice(0, active).each(function() {
+				offset += this.offsetHeight;
+			});
+            if((offset + activeItem[0].offsetHeight - list.scrollTop()) > list[0].clientHeight) {
+                list.scrollTop(offset + activeItem[0].offsetHeight - list.innerHeight());
+            } else if(offset < list.scrollTop()) {
+                list.scrollTop(offset);
+            }
+        }
+	};
+	
+	function movePosition(step) {
+		active += step;
+		if (active < 0) {
+			active = listItems.size() - 1;
+		} else if (active >= listItems.size()) {
+			active = 0;
+		}
+	}
+	
+	function limitNumberOfItems(available) {
+		return options.max && options.max < available
+			? options.max
+			: available;
+	}
+	
+	function fillList() {
+		list.empty();
+		var max = limitNumberOfItems(data.length);
+		for (var i=0; i < max; i++) {
+			if (!data[i])
+				continue;
+			var formatted = options.formatItem(data[i].data, i+1, max, data[i].value, term);
+			if ( formatted === false )
+				continue;
+			var li = $("<li/>").html( options.highlight(formatted, term) ).addClass(i%2 == 0 ? "ac_even" : "ac_odd").appendTo(list)[0];
+			$.data(li, "ac_data", data[i]);
+		}
+		listItems = list.find("li");
+		if ( options.selectFirst ) {
+			listItems.slice(0, 1).addClass(CLASSES.ACTIVE);
+			active = 0;
+		}
+		// apply bgiframe if available
+		if ( $.fn.bgiframe )
+			list.bgiframe();
+	}
+	
+	return {
+		display: function(d, q) {
+			init();
+			data = d;
+			term = q;
+			fillList();
+		},
+		next: function() {
+			moveSelect(1);
+		},
+		prev: function() {
+			moveSelect(-1);
+		},
+		pageUp: function() {
+			if (active != 0 && active - 8 < 0) {
+				moveSelect( -active );
+			} else {
+				moveSelect(-8);
+			}
+		},
+		pageDown: function() {
+			if (active != listItems.size() - 1 && active + 8 > listItems.size()) {
+				moveSelect( listItems.size() - 1 - active );
+			} else {
+				moveSelect(8);
+			}
+		},
+		hide: function() {
+			element && element.hide();
+			listItems && listItems.removeClass(CLASSES.ACTIVE);
+			active = -1;
+		},
+		visible : function() {
+			return element && element.is(":visible");
+		},
+		current: function() {
+			return this.visible() && (listItems.filter("." + CLASSES.ACTIVE)[0] || options.selectFirst && listItems[0]);
+		},
+		show: function() {
+			var offset = $(input).offset();
+			element.css({
+				width: typeof options.width == "string" || options.width > 0 ? options.width : $(input).width(),
+				top: offset.top + input.offsetHeight,
+				left: offset.left
+			}).show();
+            if(options.scroll) {
+                list.scrollTop(0);
+                list.css({
+					maxHeight: options.scrollHeight,
+					overflow: 'auto'
+				});
+				
+                if($("html").hasClass('lt-ie9') && typeof document.body.style.maxHeight === "undefined") {
+					var listHeight = 0;
+					listItems.each(function() {
+						listHeight += this.offsetHeight;
+					});
+					var scrollbarsVisible = listHeight > options.scrollHeight;
+                    list.css('height', scrollbarsVisible ? options.scrollHeight : listHeight );
+					if (!scrollbarsVisible) {
+						// IE doesn't recalculate width when scrollbar disappears
+						listItems.width( list.width() - parseInt(listItems.css("padding-left")) - parseInt(listItems.css("padding-right")) );
+					}
+                }
+                
+            }
+		},
+		selected: function() {
+			var selected = listItems && listItems.filter("." + CLASSES.ACTIVE).removeClass(CLASSES.ACTIVE);
+			return selected && selected.length && $.data(selected[0], "ac_data");
+		},
+		emptyList: function (){
+			list && list.empty();
+		},
+		unbind: function() {
+			element && element.remove();
+		}
+	};
+};
+
+$.fn.selection = function(start, end) {
+	if (start !== undefined) {
+		return this.each(function() {
+			if( this.createTextRange ){
+				var selRange = this.createTextRange();
+				if (end === undefined || start == end) {
+					selRange.move("character", start);
+					selRange.select();
+				} else {
+					selRange.collapse(true);
+					selRange.moveStart("character", start);
+					selRange.moveEnd("character", end);
+					selRange.select();
+				}
+			} else if( this.setSelectionRange ){
+				this.setSelectionRange(start, end);
+			} else if( this.selectionStart ){
+				this.selectionStart = start;
+				this.selectionEnd = end;
+			}
+		});
+	}
+	var field = this[0];
+	if ( field.createTextRange ) {
+		var range = document.selection.createRange(),
+			orig = field.value,
+			teststring = "<->",
+			textLength = range.text.length;
+		range.text = teststring;
+		var caretAt = field.value.indexOf(teststring);
+		field.value = orig;
+		this.selection(caretAt, caretAt + textLength);
+		return {
+			start: caretAt,
+			end: caretAt + textLength
+		}
+	} else if( field.selectionStart !== undefined ){
+		return {
+			start: field.selectionStart,
+			end: field.selectionEnd
+		}
+	}
+};
+
+})(jQuery);
