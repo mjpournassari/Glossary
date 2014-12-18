@@ -13,20 +13,17 @@
             <div id="masthead">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-xs-5">
                             <h1 class="logo">
                                 <a class="navbar-brand" href="#">واژه‌نامه فنی آرشیوهای دیداری شنیداری</a>
                             </h1>
                         </div>
-                        <div class="com-md-8">
+                        <div class="col-xs-7">
                             <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
-<!--                                <ul class="nav navbar-nav navbar-left">
-                                    <li class="item-104"><a href="/glossary/contacts" >تماس با ما</a></li>
-                                </ul>-->
                                 <ul class="nav navbar-nav navbar-left">
-                                    <li class="item-101 current active"><a href="#" >صفحه‌ی نخست</a></li>
-                                    <li class="item-105"><a href="#" >اداره‌کل تحقیقات و جهاد خودکفایی</a></li>
-                                    <li class="item-106"><a href="#" >منابع و مآخذ</a></li>
+                                    <li class="current active"><a href="#" >صفحه‌ی نخست</a></li>
+                                    <li><a href="http://jtrc.irib.ir" >اداره‌کل تحقیقات و جهاد خودکفایی</a></li>
+                                    <li class="open-modal"><a href="#" >تماس با ما</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -36,7 +33,7 @@
             <div id="search">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-8 col-md-offset-2">
+                        <div class="col-xs-8 col-xs-offset-2 col-md-8 col-md-offset-2">
                             <form action="http://glossary.jtrc.irib.ir/service.svc" method="get" class="form-inline" role="form">
                                 <div class="form-group col-md-10">
                                     <label for="searchkey" class="sr-only">جستجو</label>
@@ -53,20 +50,45 @@
         <section id="main">
             <div class="container">
                 <div class="row">
-                    <section id="mainbody" class="col-md-8">
-                        <div class="items">
+                    <section id="mainbody" class="col-xs-9">
+                        <div class="item" style="display: none;">
+							<h2 class="page-heading"></h2>
+							<table class="table table-hover table-striped">
+								<tbody>
+									<tr>
+										<td class="col-xs-2 col-md-2">عنوان انگلیسی</td>
+										<td class="title-en"><div class="ltr col-xs-10 col-md-10"></div></td>
+									</tr>
+									<tr>
+										<td class="col-xs-2 col-md-2">عنوان فارسی</td>
+										<td class="title-fa"></td>
+									</tr>
+									<tr>
+										<td class="col-xs-2 col-md-2">توضیحات</td>
+										<td class="desc"></td>
+									</tr>
+									<tr>
+										<td class="col-xs-2 col-md-2">کلمات کلیدی</td>
+										<td class="tags"></td>
+									</tr>
+									<tr>
+										<td class="col-xs-2 col-md-2">نظر شما</td>
+										<td class="comment"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="items">
                             <h2 class="page-heading">عبارات</h2>
-                            <table id="items" class="table table-hover table-striped">
-
-                            </table>
+                            <table id="items" class="table table-hover table-striped"></table>
                         </div>
                     </section>
-                    <aside id="sidebar" class="col-md-4">
+                    <aside id="sidebar" class="col-xs-3">
                         <div class="panel-group" id="accordion">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">راهنمای فارسی</a>
+                                        راهنمای فارسی
                                     </h4>
                                 </div>
                                 <div id="collapseOne" class="panel-collapse collapse in">
@@ -80,7 +102,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">راهنمای انگلیسی</a>
+                                        راهنمای انگلیسی
                                     </h4>
                                 </div>
                                 <div id="collapseTwo" class="panel-collapse collapse in">
@@ -94,13 +116,13 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">راهنمای کلیدواژه‌ها</a>
+                                        راهنمای کلیدواژه‌ها
                                     </h4>
                                 </div>
                                 <div id="collapseTwo" class="panel-collapse collapse in">
                                     <div class="panel-body">
-                                        <ul class="alphabets en" data-lang="en">
-                                            <li></li>
+                                        <ul class="" data-lang="en">
+                                            <li><a href="/">همه عبارات</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -110,20 +132,33 @@
                 </div>
             </div>
         </section>
-        <script type="text/javascript" src="assets/js/jquery-1.11.0.min.js"></script>
-        <script type="text/javascript" src="assets/js/bootstrap-table.js"></script>
-        <script type="text/javascript" src="assets/js/locale/bootstrap-table-fa-IR.js"></script>
-        <script type="text/javascript" src="assets/js/glossary.js"></script>
-        <script type="text/javascript" src="assets/js/handlebars-v1.3.0.js"></script>
-        <script id="results-template" type="text/x-handlebars-template">
-            {{#each}}
-            <li>
-            <a href="/glossary/{{link}}">
-            {{#if fa}}<span class="fa">{{fa}}</span>{{/if}}
-            {{#if en}}<span class="en">{{en}}</span>{{/if}}
-            </a>
-            </li>
-            {{/each}}
-        </script>
+		<div id="contacts-modal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title">تماس با ما</h4>
+					</div>
+					<div class="modal-body">
+						<p></p>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div>
+		<div id="comment-tmpl" class="hide">
+			<form role="form" method="post">
+				<div class="control-group">
+					<input type="hidden" id="eng-word" name="word" value="" />
+					<textarea class="form-control" name="text" placeholder="انتقاد یا پیشنهاد شما..."></textarea>
+				</div>
+				<div class="control-group">
+					<button class="btn btn-default" role="button">ارسال</button>
+				</div>
+			</form>
+		</div>
+       <script type="text/javascript" src="assets/js/jquery-1.11.0.min.js"></script>
+       <script type="text/javascript" src="assets/js/bootstrap-table.js"></script>
+       <script type="text/javascript" src="assets/js/locale/bootstrap-table-fa-IR.js"></script>
+       <script type="text/javascript" src="assets/js/glossary.js"></script>
     </body>
 </html>

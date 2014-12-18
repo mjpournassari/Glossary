@@ -1,7 +1,23 @@
 $(function() {
-    var base = $("body").attr('data-base');
-    var searchPath = base + '/words/?query=';
-    var $results = $("#results");
+	var base = $("body").attr('data-base');
+	var searchPath = base + '/words/?query=';
+	var alphaPath = base + '/words/start/?query='
+	var itemsPath = base + '/words/{id}';
+	$(document).delegate(".comment button", 'click', function(e){
+		$.ajax({
+			url: base + '/comments'
+			, type: 'post'
+			, data: $(".comment form").serialize()
+			, success: function(d) {
+				if (d == true) {
+					$(".comment").slideUp().empty().html('<div class="alert alert-success" role="alert">نظر شما دریافت شد. با تشکر</div>').slideDown();
+				}
+			}
+		});
+		e.preventDefault();
+		return false;
+	});
+	var $results = $("#results");
     $("#results").css({'width': $("#searchkey").outerWidth()});
     $("#searchkey").keyup(function(e) {
         var source = $(this).attr("data-source");
@@ -26,6 +42,30 @@ $(function() {
     // $("#search form").on('focusout', function() {
     // $results.delay(100).hide();
     // });
+	
+	$(".open-modal").on('click', function(e) {
+		loadContacts();
+		e.preventDefault();
+	});
+	function loadContacts() {
+		$.ajax({
+			url: base + '/config'
+			, success: function(d) {
+				var $modal = $("#contacts-modal");
+				var html = '<p>' + d.text + '</p>';
+					html += '<dl class="dl-horizontal">';
+					html += '<dt>آدرس</dt><dd>' + d.address + '</dd>'
+					html += '<dt>پست الکترونیک</dt><dd>' + d.email + '</dd>'
+					html += '<dt>تلفن</dt><dd>' + d.tell + '</dd>'
+					html += '<dt>نمابر</dt><dd>' + d.fax + '</dd>'
+					html += '<dt>وب سایت</dt><dd>' + d.url + '</dd>'
+					html += '</dl>';
+					$modal.find(".modal-body").html(html);
+					$modal.modal();
+			}
+		});
+	}
+	
     $results.find("li").keynav('withfocus', 'withoutfocus');
     $results.find("li:first").removeClass().addClass('withfocus');
     $results.find("li").bind("click", function() {
@@ -39,7 +79,7 @@ $(function() {
             if (typeof data !== 'undefined') {
                 for (var i = 0; i < data.length; i++) {
                     output += '<li>';
-                    output += '<a href="' + data[i].link + '">';
+                    output += '<a href="#' + data[i].ID + '">';
                     output += '<span class="fa">' + data[i].Persian + '</span>';
                     output += '<span class="en">' + data[i].English + '</span>';
                     output += ' </a>';
@@ -55,8 +95,70 @@ $(function() {
             }
         }
     };
+	$("#results").delegate("a", 'click', function() {
+		var id = $(this).attr("href").replace('#', '');
+		var itemSrc = Item.createPath(id);
+		Item.load(itemSrc);
+	});
+	$(document).delegate("#items tbody tr", 'click', function(e) {
+		var id = parseInt($(this).find("td.id").text());
+		var itemSrc = Item.createPath(id);
+		window.location.href = '#' + id;
+		// Item.load(itemSrc);
+	});
+	var Item = {
+		createPath: function(id) {
+			var itemSrc = itemsPath.replace(/{id}/g, id);
+			return itemSrc;
+		}
+		, hide: function() {
+			if ($("#mainbody > .item").is(":visible")) {
+				$("#mainbody > .item").hide();
+			}
+		}
+		, show: function() {
+			if (!$("#mainbody > .item").is(":visible")) {
+				$("#mainbody > .item").slideDown();
+			}
+		}
+		, load: function(path) {
+			var $item = $("#mainbody > .item");
+			var $commentTmpl = $("#comment-tmpl");
+			$.ajax({
+				url: path
+				, success: function(d) {
+					$item.find(".title-en div").empty().html(d.English);
+					$item.find(".title-fa").empty().html(d.Persian);
+					$item.find(".desc").empty().html(d.Description);
+					$commentTmpl.find("#eng-word").val(d.English);
+					$item.find(".comment").empty().html($commentTmpl.html());
+					var tags = '';
+					if (d.Tags !== null && d.Tags.length > 0) {
+						$.each(d.Tags, function(i, item) {
+							tags += '<div class="label label-default">' + item.Title + '</div>';
+						});
+					}
+					$item.find(".tags").empty().html(tags);
+				}
+			});
+			Items.hide();
+			Item.show();
+		}
+	};
     var Items = {
-        load: function(path) {
+		hide: function() {
+			if ($("#mainbody > .items").is(":visible")) {
+				$("#mainbody > .items").hide();
+			}
+		}
+		, show: function() {
+			if (!$("#mainbody > .items").is(":visible")) {
+				$("#mainbody > .items").slideDown();
+			}
+		}
+        , load: function(path) {
+			Item.hide();
+			Items.show();
             if ($("#items").is(":visible")) {
                 $('#items').bootstrapTable("destroy");
                 $('#items').bootstrapTable({
@@ -65,10 +167,14 @@ $(function() {
                     , cache: false
                     , pagination: true
                     , pageSize: 50
-//                    , showColumns: true
                     , clickToSelect: false
                     , columns: [
                         {
+                            field: 'ID'
+                            , title: '#'
+                            , class: 'id hide'
+                        }
+                        , {
                             field: 'English'
                             , title: 'عنوان انگلیسی'
                             , align: 'right'
@@ -87,13 +193,43 @@ $(function() {
                             , title: 'توضیحات'
                             , align: 'right'
                             , valign: 'baseline'
-                            , sortable: true
+                            // , sortable: true
                         }]
                 });
             }
         }
     };
-    Items.load(searchPath);
+	if (location.href.indexOf("#") !== -1) {
+		loadBasedOnHash();
+	} else {
+		Items.load(searchPath);
+	}
+    $(window).on('hashchange', function() {
+		loadBasedOnHash();
+	});
+	function loadBasedOnHash() {
+		var fragment = location.href.split('#')[1];
+		if (typeof fragment !== "") {
+			if (isInt(fragment)) {
+				var itemSrc = Item.createPath(fragment);
+				Item.load(itemSrc);
+			} else {
+				var alphabet = decodeURIComponent(fragment)[0];
+				var lang = 'en';
+				if(/^[a-zA-Z0-9- ]*$/.test(alphabet) === false)
+					lang = 'fa';
+				// console.log(alphaPath + alphabet);
+				Items.load(alphaPath + alphabet);
+			}
+		} else {
+			Items.load(searchPath);
+		}
+	}
+	
+	function isInt(n) {
+        return typeof parseInt(n) === "number" && isFinite(parseInt(n)) && parseInt(n) % 1 === 0;
+    }
+	
     var queryString = function(url) {
         var queryString = {};
         if (typeof url === "undefined") {
@@ -126,9 +262,14 @@ $(function() {
         var path = $(this).parent().parent().attr('data-path');
         var lang = $(this).parent().parent().attr('data-lang');
         var href = base + path;
-        Items.load(href + word);
+        // Items.load(href + word);
+		window.location.href = '#' + word;
         e.preventDefault();
     });
+	$(".logo").delegate("a", 'click', function(e) {
+		Items.load(searchPath);
+		e.preventDefault();
+	});
     // $(".mask-time").mask('99:99:99');
     $(".mask-number").on('keyup', function(event) {
         this.value = this.value.replace(/[^0-9\.]/g, '');
@@ -142,6 +283,17 @@ $(function() {
         });
         return map;
     }
+});
+$(document).ajaxStart(function(e) {
+    if ($("#progress").length === 0) { //only add progress bar if added yet.
+        $("body").append($("<div><dt/><dd/></div>").attr("id", "progress"));
+        $("#progress").width((50 + Math.random() * 30) + "%");
+    }
+});
+$(document).ajaxComplete(function() {
+    $("#progress").width("101%").delay(200).fadeOut(400, function() { //End loading animation
+        $(this).remove();
+    });
 });
 
 /*!
@@ -317,8 +469,7 @@ $.keynav.activate = function() {
  * I included it in this library's namespace because the functions aren't
  * quite the same.
  */
-$.keynav.getPos = function(e)
-{
+$.keynav.getPos = function(e){
     var l = 0;
     var t = 0;
     while (e.offsetParent) {
@@ -336,8 +487,7 @@ $.keynav.getPos = function(e)
  * This function was taken from Stefan's exellent interface plugin
  * http://www.eyecon.ro/interface/
  */
-$.intval = function(v)
-{
+$.intval = function(v){
     v = parseInt(v);
     return isNaN(v) ? 0 : v;
 };
