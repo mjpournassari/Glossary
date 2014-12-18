@@ -51,6 +51,10 @@
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
@@ -170,13 +174,21 @@
     <Content Include="assets\js\player\skins\bekle\sharing\shareScreen.png" />
     <Content Include="assets\js\test.js" />
     <Content Include="assets\js\typeahead.bundle.js" />
+    <Content Include="Db.aspx" />
     <Content Include="Global.asax" />
     <Content Include="index.html" />
     <Content Include="Service.svc" />
-    <Content Include="Uploader.aspx" />
+    <Content Include="Config.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BO.cs" />
+    <Compile Include="Db.aspx.cs">
+      <DependentUpon>Db.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Db.aspx.designer.cs">
+      <DependentUpon>Db.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -190,12 +202,12 @@
     </Compile>
     <Compile Include="IService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Uploader.aspx.cs">
-      <DependentUpon>Uploader.aspx</DependentUpon>
+    <Compile Include="Config.aspx.cs">
+      <DependentUpon>Config.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Uploader.aspx.designer.cs">
-      <DependentUpon>Uploader.aspx</DependentUpon>
+    <Compile Include="Config.aspx.designer.cs">
+      <DependentUpon>Config.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utility.cs" />
   </ItemGroup>
@@ -237,6 +249,7 @@
     <Content Include="assets\js\locale\bootstrap-table-en-US.js.template" />
     <Content Include="assets\js\locale\README.md" />
     <Content Include="assets\js\player\skins\bekle\bekle.zip" />
+    <Content Include="Config.json" />
     <None Include="MyDB.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>

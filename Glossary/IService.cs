@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -42,6 +43,21 @@ namespace Glossary
         BodyStyle = WebMessageBodyStyle.Bare,
         UriTemplate = "/words/{Id}")]
         BO.Word selectWordById(string Id);
+
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare,
+        UriTemplate = "/config")]
+        BO.Config ReturnConfig();
+
+
+        [WebInvoke(Method = "POST",
+       ResponseFormat = WebMessageFormat.Json,
+       BodyStyle = WebMessageBodyStyle.Bare,
+       UriTemplate = "/comments")]
+       bool commentInsert(Stream Data);
     }
 
 }

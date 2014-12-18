@@ -13,22 +13,28 @@ namespace Glossary
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //string q = "";
+            string q = "";
             //System.IO.StreamReader sr = new System.IO.StreamReader(HttpContext.Current.Server.MapPath("1.sql"));
 
-            //q = sr.ReadToEnd();
+            q = @"CREATE TABLE [dbo].[Comments](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Text] [nvarchar](max) NULL,
+	[Word] [nvarchar](max) NULL,
+	[Datetime] [datetime] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+";
 
 
-            //var sqlCommand = new SqlCommand();
-            //sqlCommand.CommandText = q;
-            //sqlCommand.CommandType = CommandType.Text;
-            //sqlCommand.Connection = new SqlConnection("Data Source=.;Initial Catalog=glossary;Persist Security Info=True;User ID=dbuser;Password=Glossary123@");
+            var sqlCommand = new SqlCommand();
+            sqlCommand.CommandText = q;
+            sqlCommand.CommandType = CommandType.Text;
+            sqlCommand.Connection = new SqlConnection("Data Source=.;Initial Catalog=glossary;Persist Security Info=True;User ID=dbuser;Password=123qwe!@#");
 
 
-            //sqlCommand.Connection.Open();
-            //sqlCommand.ExecuteNonQuery();
-            //sqlCommand.Connection.Close();
-            //sqlCommand.Dispose();
+            sqlCommand.Connection.Open();
+            sqlCommand.ExecuteNonQuery();
+            sqlCommand.Connection.Close();
+            sqlCommand.Dispose();
         }
     }
 }

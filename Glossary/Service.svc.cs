@@ -6,6 +6,11 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
 using Glossary.MyDBTableAdapters;
+using Newtonsoft.Json;
+using System.Web.Hosting;
+using System.IO;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace Glossary
 {
@@ -153,7 +158,6 @@ namespace Glossary
         {
             return Utility.excelToDb();
         }
-
         public BO.Word selectWordById(string Id)
         {
             WordsTableAdapter Ta = new WordsTableAdapter();
@@ -207,6 +211,29 @@ namespace Glossary
 
             return w;
         }
+        public BO.Config ReturnConfig()
+        {
+            string result = "";
+            System.IO.StreamReader sr = new System.IO.StreamReader(HostingEnvironment.MapPath("/Config.json"));
+            result = sr.ReadToEnd();
+            sr.Close();
 
+            BO.Config cnfg = JsonConvert.DeserializeObject<BO.Config>(result);
+            return cnfg;
+        }
+        public bool commentInsert(Stream Data)
+        {           
+            string body = new StreamReader(Data).ReadToEnd();
+            NameValueCollection nvc = HttpUtility.ParseQueryString(body);
+
+            string word = nvc["word"].ToString();
+            string text = nvc["text"].ToString();
+
+
+            CommentsTableAdapter Ta = new CommentsTableAdapter();
+            Ta.Insert_Comment(text, word);
+
+            return true;
+        }
     }
 }

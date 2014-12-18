@@ -55,6 +55,27 @@ namespace Glossary
             public Int64 Pid { get; set; }
 
         }
-    }
 
+        [DataContract]
+        public class Config
+        {
+            [DataMember]
+            public string text { get; set; }
+
+            [DataMember]
+            public string address { get; set; }
+
+            [DataMember]
+            public string tell { get; set; }
+
+            [DataMember]
+            public string fax { get; set; }
+
+            [DataMember]
+            public string email { get; set; }
+
+            [DataMember]
+            public string url { get; set; }
+        }
+    }
 }
