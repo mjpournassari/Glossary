@@ -28,20 +28,40 @@
                     <asp:Panel runat="server" Visible="false" ID="pnlConfig">
                         <table style="width: 100%;">
                             <tr>
-                                <td style="width: 200px">Title:</td>
+                                <td style="width: 100px">text</td>
                                 <td>
-                                    <asp:TextBox ID="TextBox2" runat="server" Height="100px" TextMode="MultiLine" Width="100%"></asp:TextBox>
+                                    <asp:TextBox ID="txtText" runat="server" Height="100px" TextMode="MultiLine" Width="100%"></asp:TextBox>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Contact:</td>
+                                <td>address</td>
                                 <td>
-                                    <asp:TextBox ID="TextBox3" runat="server" Height="100px" TextMode="MultiLine" Width="100%"></asp:TextBox>
+                                    <asp:TextBox ID="txtAddress" runat="server" Height="100px" TextMode="MultiLine" Width="100%"></asp:TextBox>
                                 </td>
                             </tr>
                             <tr>
-                                <td>&nbsp;</td>
-                                <td>&nbsp;</td>
+                                <td>tel</td>
+                                <td>
+                                    <asp:TextBox ID="txtTel" runat="server" Width="100%"></asp:TextBox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>fax</td>
+                                <td>
+                                    <asp:TextBox ID="txtFax" runat="server" Width="100%"></asp:TextBox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>email</td>
+                                <td>
+                                    <asp:TextBox ID="txtEmail" runat="server" Width="100%"></asp:TextBox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>url</td>
+                                <td>
+                                    <asp:TextBox ID="txtUrl" runat="server" Width="100%"></asp:TextBox>
+                                </td>
                             </tr>
                         </table>
                     </asp:Panel>

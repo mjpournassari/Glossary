@@ -37,8 +37,12 @@ namespace Glossary
 
                 BO.Config cnfg = JsonConvert.DeserializeObject<BO.Config>(result);
 
-                TextBox2.Text = cnfg.address;
-                TextBox3.Text = cnfg.email;
+                txtAddress.Text = cnfg.address;
+                txtEmail.Text = cnfg.email;
+                txtFax.Text = cnfg.fax;
+                txtTel.Text = cnfg.tell;
+                txtText.Text = cnfg.text;
+                txtUrl.Text = cnfg.url;
 
 
                
