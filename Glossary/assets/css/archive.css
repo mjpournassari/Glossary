@@ -1023,3 +1023,8 @@ th { text-align: right; }
 .dl-horizontal dt { float: right; clear: right; text-align: left; margin-bottom: 10px; }
 .dl-horizontal dd { margin-left: 0; margin-right: 180px; }
 .comment button { margin-top: 10px; }
+
+.config-tabs { margin-top: -30px; }
+.config-tabs li { padding: 0 10px; }
+.config-tabs li a { font-weight: bold; }
+#config .page-title { direction: rtl; text-align: left; }

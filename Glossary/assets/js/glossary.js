@@ -3,6 +3,12 @@ $(function() {
 	var searchPath = base + '/words/?query=';
 	var alphaPath = base + '/words/start/?query='
 	var itemsPath = base + '/words/{id}';
+	/* Config */
+	if ($("#config").length) {
+		$("table table").addClass("table").addClass("table-hiver").addClass("table-striped");
+		$("input[type=text], textarea").addClass("form-control");
+		$("input[type=submit], button").addClass("btn").addClass("btn-default");
+	}
 	$(document).delegate(".comment button", 'click', function(e){
 		$.ajax({
 			url: base + '/comments'
