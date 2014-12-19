@@ -92,6 +92,7 @@
     <Content Include="assets\img\loading2.gif" />
     <Content Include="assets\img\loading_background.png" />
     <Content Include="assets\img\logo.png" />
+    <Content Include="assets\img\No.png" />
     <Content Include="assets\img\overlay.png" />
     <Content Include="assets\js\archive.js" />
     <Content Include="assets\js\AutoFill.min.js" />
