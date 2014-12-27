@@ -201,6 +201,25 @@ namespace Glossary
                     tg.Title = dtTags[j]["tgTitle"].ToString();
                     tg.Id = int.Parse(dtTags[j]["tgid"].ToString());
 
+
+                    //Find Related words for tag:
+                    List<BO.Word> relatedWords = new List<BO.Word>();
+                    MyDB.WordsDataTable DtRelated = Ta.Select_Words_ByTag(int.Parse(dtTags[j]["tgid"].ToString()));
+                    for (int p = 0; p < DtRelated.Rows.Count; p++)
+                    {
+                        BO.Word wrd = new BO.Word();
+                        wrd.ID = long.Parse(DtRelated[p]["ID"].ToString());
+                        if (wrd.ID != w.ID)
+                        {
+                            //All related items except current
+                            wrd.Description = DtRelated[p]["Description"].ToString();
+                            wrd.Persian = DtRelated[p]["Persian"].ToString();
+                            wrd.English = DtRelated[p]["English"].ToString();
+                            relatedWords.Add(wrd);
+                        }
+                    }
+
+                    tg.Related = relatedWords;
                     wTags.Add(tg);
                 }
 

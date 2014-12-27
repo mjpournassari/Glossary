@@ -28,6 +28,8 @@ namespace Glossary
 
             [DataMember]
             public List<Tags> Tags { get; set; }
+
+          
         }
 
 
@@ -53,6 +55,8 @@ namespace Glossary
             public string Title { get; set; }
          
             public Int64 Pid { get; set; }
+            [DataMember]
+            public List<Word> Related { get; set; }
 
         }
 

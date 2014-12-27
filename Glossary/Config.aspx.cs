@@ -106,7 +106,6 @@ namespace Glossary
 
                 GridView1.DataSource = Dt;
                 GridView1.DataBind();
-
             }
         }
 
